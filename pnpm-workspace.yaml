@@ -6,6 +6,8 @@ saveExact: true
 
 minimumReleaseAge: 4320 # 3 days in minutes
 
+allowBuilds:
+  lefthook: true
 
 catalog:
   '@types/node': 25.9.0
