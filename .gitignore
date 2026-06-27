@@ -1,0 +1,46 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+out
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env*.local
+
+# Logs
+logs
+*.log
+.pnpm-debug.log*
+
+# Turbo
+.turbo
+
+# Testing
+coverage
+
+# IDEs and editors
+.idea
+.idea_modules
+*.iml
+*.ipr
+*.iws
+.vscode
+
+# Claude Code
+.claude/settings.local.json
+
+# Misc
+*.local
+.DS_Store
+._*
+*.pem
+*.sw?
+*~
+*.tgz
+.cache
+tmp
+temp
