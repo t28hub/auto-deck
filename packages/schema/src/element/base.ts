@@ -1,13 +1,18 @@
 import { z } from 'zod';
 import { idSchema } from '../id';
 import { rectSchema } from '../geometry';
+import { slotIdSchema } from '../layout/slot';
 
 /**
  * Schema for the fields shared by every element.
+ * An element either binds to a layout slot (slot) and inherits its geometry, or
+ * is freely positioned (bounds). Enforcing exactly one of them is deferred to
+ * the engine's deck resolution.
  */
 export const baseElementSchema = z.object({
   id: idSchema,
-  bounds: rectSchema,
+  slot: slotIdSchema.optional(),
+  bounds: rectSchema.optional(),
 });
 
 /**

@@ -6,7 +6,13 @@ import { emuSchema, type Emu } from '../units';
  */
 export const pointSchema = z
   .object({
+      /**
+       * The x coordinate in EMU.
+       */
     x: emuSchema,
+      /**
+       * The y coordinate in EMU.
+       */
     y: emuSchema,
   })
   .readonly();

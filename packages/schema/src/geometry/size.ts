@@ -6,8 +6,14 @@ import { positiveEmuSchema, type Emu } from '../units';
  */
 export const sizeSchema = z
   .object({
-    width: positiveEmuSchema,
-    height: positiveEmuSchema,
+      /**
+       * The width in EMU.
+       */
+    w: positiveEmuSchema,
+      /**
+       * The height in EMU.
+       */
+    h: positiveEmuSchema,
   })
   .readonly();
 
@@ -19,11 +25,11 @@ export type Size = z.infer<typeof sizeSchema>;
 /**
  * Creates a validated {@link Size}.
  *
- * @param width - The width in EMU.
- * @param height - The height in EMU.
+ * @param w - The width in EMU.
+ * @param h - The height in EMU.
  * @returns The validated size.
  * @throws {z.ZodError} If width or height is not a positive integer.
  */
-export function size(width: Emu, height: Emu): Size {
-  return sizeSchema.parse({ width, height });
+export function size(w: Emu, h: Emu): Size {
+  return sizeSchema.parse({ w, h });
 }
