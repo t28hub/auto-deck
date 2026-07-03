@@ -1,3 +1,10 @@
+pre-commit:
+  jobs:
+    - name: biome
+      glob: '*.{js,ts,cjs,mjs,cts,mts,jsx,tsx,json,jsonc,css}'
+      run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
+      stage_fixed: true
+
 commit-msg:
   jobs:
     - name: commitlint

@@ -10,9 +10,13 @@
     "url": "git+https://github.com/t28hub/auto-deck.git"
   },
   "scripts": {
+    "format": "biome format --write",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
     "prepare": "lefthook install"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.1",
     "@commitlint/cli": "21.1.0",
     "@commitlint/config-conventional": "21.1.0",
     "@types/node": "catalog:",
