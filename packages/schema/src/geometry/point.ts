@@ -1,18 +1,18 @@
 import { z } from 'zod';
-import { emuSchema, type Emu } from '../units';
+import { type Emu, emuSchema } from '../units';
 
 /**
  * Schema for a 2D point in EMU.
  */
 export const pointSchema = z
   .object({
-      /**
-       * The x coordinate in EMU.
-       */
+    /**
+     * The x coordinate in EMU.
+     */
     x: emuSchema,
-      /**
-       * The y coordinate in EMU.
-       */
+    /**
+     * The y coordinate in EMU.
+     */
     y: emuSchema,
   })
   .readonly();

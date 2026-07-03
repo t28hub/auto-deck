@@ -1,4 +1,4 @@
-import type {Id, Rect, Size} from '@auto-deck/schema';
+import type { Id, Rect, Size } from '@auto-deck/schema';
 
 /**
  * A content node in a scene: a uniform tree the renderers fold over.

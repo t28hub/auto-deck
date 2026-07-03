@@ -1,4 +1,4 @@
-import { toPixels, type Emu } from '@auto-deck/schema';
+import { type Emu, toPixels } from '@auto-deck/schema';
 
 /**
  * Converts EMU to pixels, rounded to two decimals.

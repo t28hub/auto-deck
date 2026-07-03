@@ -1,5 +1,5 @@
+import { type Renderer, renderScene, type Viewport } from '@auto-deck/renderer';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { renderScene, type Renderer, type Viewport } from '@auto-deck/renderer';
 import { px } from './units';
 import { svgVisitor } from './visitor';
 
@@ -38,6 +38,7 @@ export const svgRenderer: Renderer<string, SvgContext> = {
         width={viewport.width}
         height={viewport.height}
       >
+        <title>{scene.id}</title>
         <rect x={0} y={0} width={world.width} height={world.height} fill="#ffffff" />
         {scene.children.map((node) => renderScene(node, svgVisitor))}
       </svg>,

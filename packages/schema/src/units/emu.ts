@@ -9,10 +9,7 @@ export const emuSchema = z.number().int('EMU must be an integer').brand<'EMU'>()
  * Schema for a positive length measured in EMU.
  * Used for measurements such as width and height.
  */
-export const positiveEmuSchema = emuSchema.refine(
-  (value) => value > 0,
-  'EMU must be positive',
-);
+export const positiveEmuSchema = emuSchema.refine((value) => value > 0, 'EMU must be positive');
 
 /**
  * A length in EMU.

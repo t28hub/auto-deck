@@ -1,5 +1,5 @@
-import type { ReactElement } from 'react';
 import type { SceneVisitor } from '@auto-deck/renderer';
+import type { ReactElement } from 'react';
 import { px } from './units';
 
 /**

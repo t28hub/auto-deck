@@ -1,6 +1,6 @@
-import type { Id } from '@auto-deck/schema';
 import type { ResolvedDeck } from '@auto-deck/engine';
 import { scenesFromDeck } from '@auto-deck/renderer';
+import type { Id } from '@auto-deck/schema';
 import { svgRenderer } from './renderer';
 
 /**

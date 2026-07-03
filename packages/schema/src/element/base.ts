@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { idSchema } from '../id';
 import { rectSchema } from '../geometry';
+import { idSchema } from '../id';
 import { slotIdSchema } from '../layout/slot';
 
 /**

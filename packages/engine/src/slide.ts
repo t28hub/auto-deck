@@ -1,8 +1,8 @@
 import type { Element, Id, Layout, Rect, Slide, SlotId } from '@auto-deck/schema';
 import { rectSchema } from '@auto-deck/schema';
-import { resolveLength } from './length';
 import type { ResolveDiagnostic, ResolveResult } from './diagnostic';
 import type { ResolvedElement } from './element';
+import { resolveLength } from './length';
 
 /**
  * A slide whose elements are fully resolved.
@@ -19,11 +19,7 @@ export type ResolvedSlide = Omit<Slide, 'layoutId' | 'elements'> & {
  * @param area - The absolute content area, in EMU.
  * @returns The resolved elements, or the diagnostics that prevented resolution.
  */
-export function resolveSlide(
-  slide: Slide,
-  layout: Layout,
-  area: Rect,
-): ResolveResult<readonly ResolvedElement[]> {
+export function resolveSlide(slide: Slide, layout: Layout, area: Rect): ResolveResult<readonly ResolvedElement[]> {
   const { id: slideId, elements } = slide;
   const diagnostics: ResolveDiagnostic[] = [];
 
@@ -79,9 +75,9 @@ export function resolveSlide(
       if (count > 0) {
         const gap = resolveLength(slot.flow.gap, area.w);
         const cell = (region.w - (count - 1) * gap) / count;
-        for (let i = 0; i < count; i++) {
-          const x = region.x + i * (cell + gap);
-          boundsById.set(group[i]!.id, makeRect(x, region.y, cell, region.h));
+        for (const [index, element] of group.slice(0, count).entries()) {
+          const x = region.x + index * (cell + gap);
+          boundsById.set(element.id, makeRect(x, region.y, cell, region.h));
         }
       }
     } else {
@@ -93,7 +89,11 @@ export function resolveSlide(
           message: `Slot "${slotId}" on slide "${slideId}" has no flow and holds one element but ${group.length} are bound to it.`,
         });
       }
-      boundsById.set(group[0]!.id, makeRect(region.x, region.y, region.w, region.h));
+      // Groups are built non-empty, so the first element always exists.
+      const [first] = group;
+      if (first !== undefined) {
+        boundsById.set(first.id, makeRect(region.x, region.y, region.w, region.h));
+      }
     }
   }
 

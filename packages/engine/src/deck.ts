@@ -1,8 +1,8 @@
 import type { Deck, Emu, Rect } from '@auto-deck/schema';
 import { emu, pixels, rect } from '@auto-deck/schema';
-import { resolveSlide, type ResolvedSlide } from './slide';
-import type { ResolvedElement } from './element';
 import type { ResolveDiagnostic, ResolveResult } from './diagnostic';
+import type { ResolvedElement } from './element';
+import { type ResolvedSlide, resolveSlide } from './slide';
 
 /**
  * A deck whose every element carries absolute bounds.
@@ -68,10 +68,7 @@ function* allElements(slides: readonly ResolvedSlide[]): Generator<ResolvedEleme
  * @param options - Optional resolution settings.
  * @returns A resolved deck on success, otherwise the collected diagnostics.
  */
-export function resolveDeck(
-  deck: Deck,
-  { margin = DEFAULT_MARGIN }: ResolveOptions = {},
-): ResolveResult<ResolvedDeck> {
+export function resolveDeck(deck: Deck, { margin = DEFAULT_MARGIN }: ResolveOptions = {}): ResolveResult<ResolvedDeck> {
   const diagnostics: ResolveDiagnostic[] = [];
 
   for (const layoutId of duplicatesBy(deck.layouts, (layout) => layout.id)) {
@@ -90,15 +87,8 @@ export function resolveDeck(
     });
   }
 
-  const layoutsById = new Map(
-    deck.layouts.map((layout) => [layout.id, layout] as const),
-  );
-  const area: Rect = rect(
-    margin,
-    margin,
-    emu(deck.canvas.size.w - 2 * margin),
-    emu(deck.canvas.size.h - 2 * margin),
-  );
+  const layoutsById = new Map(deck.layouts.map((layout) => [layout.id, layout] as const));
+  const area: Rect = rect(margin, margin, emu(deck.canvas.size.w - 2 * margin), emu(deck.canvas.size.h - 2 * margin));
 
   const slides: ResolvedSlide[] = [];
   for (const slide of deck.slides) {

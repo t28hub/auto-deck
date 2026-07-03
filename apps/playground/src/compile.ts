@@ -1,7 +1,7 @@
-import { z } from 'zod';
-import { deckSchema } from '@auto-deck/schema';
 import { resolveDeck } from '@auto-deck/engine';
 import { renderDeckToSvg, type SvgSlide } from '@auto-deck/renderer-svg';
+import { deckSchema } from '@auto-deck/schema';
+import { z } from 'zod';
 
 /**
  * The outcome of compiling deck JSON text into rendered slides.
@@ -39,9 +39,7 @@ export function compile(source: string): CompileResult {
 
   const result = resolveDeck(parsed.data);
   if (!result.success) {
-    const lines = result.diagnostics.map(
-      (diagnostic) => `  [${diagnostic.code}] ${diagnostic.message}`,
-    );
+    const lines = result.diagnostics.map((diagnostic) => `  [${diagnostic.code}] ${diagnostic.message}`);
     return {
       success: false,
       message: `Resolution failed\n${lines.join('\n')}`,

@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { idSchema } from './id';
 import { canvasSchema } from './canvas';
+import { idSchema } from './id';
 import { layoutSchema } from './layout';
 import { slideSchema } from './slide';
 

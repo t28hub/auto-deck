@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { slotSchema, type Slot } from './slot';
+import { type Slot, slotSchema } from './slot';
 
 /**
  * Schema for a layout identifier.
@@ -38,10 +38,6 @@ export type Layout = z.infer<typeof layoutSchema>;
  * @returns The validated layout.
  * @throws {z.ZodError} If a field is invalid.
  */
-export function layout(
-  id: LayoutId,
-  name: string,
-  slots: readonly Slot[],
-): Layout {
+export function layout(id: LayoutId, name: string, slots: readonly Slot[]): Layout {
   return layoutSchema.parse({ id, name, slots });
 }

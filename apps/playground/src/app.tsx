@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from 'react';
+import { type ReactElement, useState } from 'react';
 import { compile } from './compile';
 import { SAMPLE_DECK } from './sample';
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
+import { elementSchema } from './element';
 import { idSchema } from './id';
 import { layoutIdSchema } from './layout';
-import { elementSchema } from './element';
 
 /**
  * Schema for a slide, a single page of a deck.

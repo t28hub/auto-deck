@@ -1,13 +1,13 @@
-import {z} from 'zod';
-import {emuSchema, type Emu} from '../units';
+import { z } from 'zod';
+import { type Emu, emuSchema } from '../units';
 
 /**
  * Schema for a length within a layout spec.
  * Either a fixed length in EMU, or a relative length.
  */
 export const lengthSchema = z.union([
-    z.object({emu: emuSchema}).readonly(),
-    z.object({ratio: z.number().nonnegative(), offset: emuSchema.optional()}).readonly(),
+  z.object({ emu: emuSchema }).readonly(),
+  z.object({ ratio: z.number().nonnegative(), offset: emuSchema.optional() }).readonly(),
 ]);
 
 /**
@@ -23,7 +23,7 @@ export type Length = z.infer<typeof lengthSchema>;
  * @returns The fixed length.
  */
 export function fixed(value: Emu): Length {
-    return lengthSchema.parse({emu: value});
+  return lengthSchema.parse({ emu: value });
 }
 
 /**
@@ -34,8 +34,8 @@ export function fixed(value: Emu): Length {
  * @returns The relative length.
  */
 export function relative(ratio: number, offset?: Emu): Length {
-    if (offset === undefined) {
-        return lengthSchema.parse({ratio});
-    }
-    return lengthSchema.parse({ratio, offset});
+  if (offset === undefined) {
+    return lengthSchema.parse({ ratio });
+  }
+  return lengthSchema.parse({ ratio, offset });
 }

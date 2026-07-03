@@ -12,10 +12,7 @@ import type { SceneNode } from './scene';
  *   node, or void for an imperative canvas draw).
  */
 export type SceneVisitor<T> = {
-  readonly [K in SceneNode['kind']]: (
-    node: Extract<SceneNode, { readonly kind: K }>,
-    children: readonly T[],
-  ) => T;
+  readonly [K in SceneNode['kind']]: (node: Extract<SceneNode, { readonly kind: K }>, children: readonly T[]) => T;
 };
 
 /**

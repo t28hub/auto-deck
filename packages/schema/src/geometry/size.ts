@@ -1,18 +1,18 @@
 import { z } from 'zod';
-import { positiveEmuSchema, type Emu } from '../units';
+import { type Emu, positiveEmuSchema } from '../units';
 
 /**
  * Schema for a 2D size in EMU.
  */
 export const sizeSchema = z
   .object({
-      /**
-       * The width in EMU.
-       */
+    /**
+     * The width in EMU.
+     */
     w: positiveEmuSchema,
-      /**
-       * The height in EMU.
-       */
+    /**
+     * The height in EMU.
+     */
     h: positiveEmuSchema,
   })
   .readonly();

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import type { Emu } from '../units';
 import { pointSchema } from './point';
 import { sizeSchema } from './size';
@@ -7,10 +7,7 @@ import { sizeSchema } from './size';
  * Schema for an axis-aligned rectangle in EMU.
  * Flattens a point (x, y) and a size (w, h) into a single object.
  */
-export const rectSchema = pointSchema
-  .unwrap()
-  .extend(sizeSchema.unwrap().shape)
-  .readonly();
+export const rectSchema = pointSchema.unwrap().extend(sizeSchema.unwrap().shape).readonly();
 
 /**
  * An axis-aligned rectangle measured in EMU.

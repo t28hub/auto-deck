@@ -1,7 +1,7 @@
 import { z } from 'zod';
+import { type Size, size, sizeSchema } from './geometry';
 import { idSchema } from './id';
 import { pixels } from './units';
-import { size, sizeSchema, type Size } from './geometry';
 
 /**
  * 16:9 widescreen canvas size (1280×720 px @96dpi), the common PowerPoint widescreen size.
@@ -28,9 +28,7 @@ export const CANVAS_PRESETS = {
 /**
  * Schema for the name of a canvas preset.
  */
-export const canvasPresetSchema = z.enum(
-  Object.keys(CANVAS_PRESETS) as [keyof typeof CANVAS_PRESETS],
-);
+export const canvasPresetSchema = z.enum(Object.keys(CANVAS_PRESETS) as [keyof typeof CANVAS_PRESETS]);
 
 /**
  * The name of a canvas preset.
