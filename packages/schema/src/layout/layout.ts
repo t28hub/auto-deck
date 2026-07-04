@@ -1,11 +1,12 @@
 import { z } from 'zod';
+import { brandedIdSchema } from '../id';
 import { type Slot, slotSchema } from './slot';
 
 /**
  * Schema for a layout identifier.
  * Branded so a slide can reference the layout it uses with type safety.
  */
-export const layoutIdSchema = z.string().min(1).brand<'LayoutId'>();
+export const layoutIdSchema = brandedIdSchema<'LayoutId'>();
 
 /**
  * A layout identifier.

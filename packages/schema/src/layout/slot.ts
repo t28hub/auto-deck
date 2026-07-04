@@ -1,10 +1,11 @@
 import { z } from 'zod';
+import { brandedIdSchema } from '../id';
 import { lengthSchema } from './length';
 
 /**
  * Schema for a slot identifier, unique within its layout.
  */
-export const slotIdSchema = z.string().min(1).brand<'SlotId'>();
+export const slotIdSchema = brandedIdSchema<'SlotId'>();
 
 /**
  * A slot identifier, unique within its layout.

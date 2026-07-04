@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { rectSchema } from '../geometry';
 import { idSchema } from '../id';
-import { slotIdSchema } from '../layout/slot';
+import { slotIdSchema } from '../layout';
 
 /**
  * Schema for the fields shared by every element.

@@ -18,22 +18,23 @@ export const WIDESCREEN_16_9: Size = size(pixels(1280), pixels(720));
 export const STANDARD_4_3: Size = size(pixels(960), pixels(720));
 
 /**
- * Canvas sizes keyed by preset name.
- */
-export const CANVAS_PRESETS = {
-  widescreen: WIDESCREEN_16_9,
-  standard: STANDARD_4_3,
-} as const;
-
-/**
  * Schema for the name of a canvas preset.
  */
-export const canvasPresetSchema = z.enum(Object.keys(CANVAS_PRESETS) as [keyof typeof CANVAS_PRESETS]);
+export const canvasPresetSchema = z.enum(['widescreen', 'standard']);
 
 /**
  * The name of a canvas preset.
  */
 export type CanvasPreset = z.infer<typeof canvasPresetSchema>;
+
+/**
+ * Canvas sizes keyed by preset name. The satisfies clause keeps the map in
+ * lockstep with the preset schema.
+ */
+export const CANVAS_PRESETS = {
+  widescreen: WIDESCREEN_16_9,
+  standard: STANDARD_4_3,
+} as const satisfies Record<CanvasPreset, Size>;
 
 /**
  * Resolves a canvas preset name to its {@link Size}.

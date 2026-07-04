@@ -1,9 +1,19 @@
 import { z } from 'zod';
 
 /**
+ * Builds a non-empty string schema branded with the given tag, so every entity
+ * identifier shares one validation policy.
+ *
+ * @returns The branded identifier schema.
+ */
+export function brandedIdSchema<Brand extends string>() {
+  return z.string().min(1).brand<Brand>();
+}
+
+/**
  * Schema for a unique entity identifier.
  */
-export const idSchema = z.string().min(1).brand<'Id'>();
+export const idSchema = brandedIdSchema<'Id'>();
 
 /**
  * A unique entity identifier.

@@ -3,13 +3,13 @@ import { z } from 'zod';
 /**
  * Schema for a length measured in EMU.
  */
-export const emuSchema = z.number().int('EMU must be an integer').brand<'EMU'>();
+export const emuSchema = z.int('EMU must be an integer').brand<'EMU'>();
 
 /**
  * Schema for a positive length measured in EMU.
  * Used for measurements such as width and height.
  */
-export const positiveEmuSchema = emuSchema.refine((value) => value > 0, 'EMU must be positive');
+export const positiveEmuSchema = emuSchema.positive('EMU must be positive');
 
 /**
  * A length in EMU.
