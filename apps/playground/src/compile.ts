@@ -1,5 +1,5 @@
 import { resolveDeck } from '@auto-deck/engine';
-import { renderDeckToSvg, type SvgSlide } from '@auto-deck/renderer-svg';
+import { renderDeck, type SvgSlide } from '@auto-deck/renderer-svg';
 import { deckSchema } from '@auto-deck/schema';
 import { z } from 'zod';
 
@@ -46,5 +46,5 @@ export function compile(source: string): CompileResult {
     };
   }
 
-  return { success: true, slides: renderDeckToSvg(result.value) };
+  return { success: true, slides: renderDeck(result.value) };
 }
