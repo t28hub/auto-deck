@@ -1,12 +1,9 @@
 import type { SceneNode } from './scene';
 
 /**
- * Renders each scene-node kind to a fragment of type T.
- *
- * A reusable building block for implementing a renderer: keyed by the node's
+ * Renders each scene-node kind to a fragment of type T. Keyed by the node's
  * discriminant, so adding a node kind breaks the mapped type until every
- * visitor handles it. Every level produces the same T, so a visitor needs only
- * one output type.
+ * visitor handles it.
  *
  * @typeParam T - The fragment a visitor produces (e.g. an SVG string, a React
  *   node, or void for an imperative canvas draw).

@@ -7,9 +7,7 @@ import type { Scene, SceneNode } from './scene';
 const NO_CHILDREN: readonly SceneNode[] = [];
 
 /**
- * Transforms a resolved deck into one scene per slide. This is the bridge from
- * the engine's resolved output to the renderer's scene model; keeping it out of
- * `scene.ts` lets the scene model stay independent of the engine.
+ * Transforms a resolved deck into one scene per slide.
  *
  * @param deck - The resolved deck to transform.
  * @returns One scene per slide, in deck order.
@@ -38,18 +36,8 @@ function toSceneNode(element: ResolvedElement): SceneNode {
         text: element.text,
         children: NO_CHILDREN,
       };
-    default:
-      return assertNever(element.type);
+    default: {
+      throw new Error(`Unhandled element type: ${element.type}`);
+    }
   }
-}
-
-/**
- * Asserts that a value is unreachable, failing the type-check if a case is missed.
- *
- * @param value - The value that should be of type never.
- * @returns Never; always throws.
- * @throws {Error} Always.
- */
-function assertNever(value: never): never {
-  throw new Error(`Unhandled element type: ${String(value)}`);
 }
