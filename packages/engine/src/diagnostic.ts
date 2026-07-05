@@ -8,52 +8,18 @@ export type ResolveResult<T> =
   | { readonly success: false; readonly diagnostics: readonly ResolveDiagnostic[] };
 
 /**
- * A problem found while resolving a deck.
+ * A problem found while resolving a deck. Every diagnostic carries a
+ * human-readable message plus the structured fields of its code.
  */
-export type ResolveDiagnostic =
-  | {
-      readonly code: 'duplicate-layout-id';
-      readonly layoutId: LayoutId;
-      readonly message: string;
-    }
-  | {
-      readonly code: 'duplicate-slide-id';
-      readonly slideId: Id;
-      readonly message: string;
-    }
-  | {
-      readonly code: 'duplicate-element-id';
-      readonly elementId: Id;
-      readonly message: string;
-    }
-  | {
-      readonly code: 'unknown-layout';
-      readonly slideId: Id;
-      readonly layoutId: LayoutId;
-      readonly message: string;
-    }
-  | {
-      readonly code: 'unknown-slot';
-      readonly slideId: Id;
-      readonly elementId: Id;
-      readonly slot: SlotId;
-      readonly message: string;
-    }
-  | {
-      readonly code: 'conflicting-geometry';
-      readonly slideId: Id;
-      readonly elementId: Id;
-      readonly message: string;
-    }
-  | {
-      readonly code: 'missing-geometry';
-      readonly slideId: Id;
-      readonly elementId: Id;
-      readonly message: string;
-    }
-  | {
-      readonly code: 'slot-overfilled';
-      readonly slideId: Id;
-      readonly slot: SlotId;
-      readonly message: string;
-    };
+export type ResolveDiagnostic = { readonly message: string } & (
+  | { readonly code: 'duplicate-layout-id'; readonly layoutId: LayoutId }
+  | { readonly code: 'duplicate-slide-id'; readonly slideId: Id }
+  | { readonly code: 'duplicate-element-id'; readonly elementId: Id }
+  | { readonly code: 'unknown-layout'; readonly slideId: Id; readonly layoutId: LayoutId }
+  | { readonly code: 'unknown-slot'; readonly slideId: Id; readonly elementId: Id; readonly slot: SlotId }
+  | { readonly code: 'conflicting-geometry'; readonly slideId: Id; readonly elementId: Id }
+  | { readonly code: 'missing-geometry'; readonly slideId: Id; readonly elementId: Id }
+  | { readonly code: 'slot-overfilled'; readonly slideId: Id; readonly slot: SlotId }
+  | { readonly code: 'invalid-geometry'; readonly slideId: Id; readonly slot: SlotId }
+  | { readonly code: 'invalid-content-area' }
+);
