@@ -10,12 +10,14 @@
     "url": "git+https://github.com/t28hub/auto-deck.git"
   },
   "scripts": {
+    "prepare": "lefthook install",
     "build": "turbo build",
     "dev": "turbo dev",
     "format": "biome format --write",
     "lint": "biome check",
     "lint:fix": "biome check --write",
-    "prepare": "lefthook install",
+    "test": "turbo test",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
@@ -23,9 +25,11 @@
     "@commitlint/cli": "21.1.0",
     "@commitlint/config-conventional": "21.1.0",
     "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "lefthook": "2.1.9",
     "turbo": "2.10.1",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">=24"
