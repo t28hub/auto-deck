@@ -1,0 +1,88 @@
+import type { Scene } from '@auto-deck/renderer';
+import { idSchema, pixels, rect, WIDESCREEN_16_9 } from '@auto-deck/schema';
+import { assert, describe, expect, it } from 'vitest';
+import { parseSvg } from '../test/parse-svg';
+import { svgRenderer } from './renderer';
+
+/**
+ * Builds a one-node scene on a 1280x720 canvas.
+ */
+function createScene(text: string): Scene {
+  return {
+    id: idSchema.parse('slide-1'),
+    canvas: WIDESCREEN_16_9,
+    children: [
+      {
+        kind: 'text',
+        id: idSchema.parse('el-1'),
+        bounds: rect(pixels(0), pixels(0), pixels(1280), pixels(144)),
+        text,
+        children: [],
+      },
+    ],
+  };
+}
+
+describe('svgRenderer', () => {
+  it('should render a standalone SVG document with a title for accessibility', () => {
+    // Act
+    const scene = createScene('Hello');
+    const actual = svgRenderer.render(scene);
+
+    // Assert
+    const parsed = parseSvg(actual);
+    expect(parsed.tagName).toBe('svg');
+    expect(parsed.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
+    expect(parsed.querySelector('title')?.textContent).toBe('slide-1');
+    expect(parsed.querySelector('text')?.textContent).toBe('Hello');
+  });
+
+  it('should default the viewport to the canvas at 1:1', () => {
+    // Act
+    const scene = createScene('Hello');
+    const actual = svgRenderer.render(scene);
+
+    // Assert
+    const parsed = parseSvg(actual);
+    expect(parsed.getAttribute('viewBox')).toBe('0 0 1280 720');
+    expect(parsed.getAttribute('width')).toBe('1280');
+    expect(parsed.getAttribute('height')).toBe('720');
+  });
+
+  it('should keep the world viewBox while a custom viewport changes the display size', () => {
+    // Act
+    const scene = createScene('Hello');
+    const actual = svgRenderer.render(scene, { viewport: { width: 640, height: 360 } });
+
+    // Assert
+    const parsed = parseSvg(actual);
+    expect(parsed.getAttribute('viewBox')).toBe('0 0 1280 720');
+    expect(parsed.getAttribute('width')).toBe('640');
+    expect(parsed.getAttribute('height')).toBe('360');
+  });
+
+  it('should draw element bounds in canvas pixels', () => {
+    // Act
+    const scene = createScene('Hello');
+    const actual = svgRenderer.render(scene);
+
+    // Assert
+    const bounds = parseSvg(actual).querySelector('g > rect');
+    assert(bounds !== null, 'Expected the text element to draw its bounding rect');
+    expect(bounds.getAttribute('x')).toBe('0');
+    expect(bounds.getAttribute('y')).toBe('0');
+    expect(bounds.getAttribute('width')).toBe('1280');
+    expect(bounds.getAttribute('height')).toBe('144');
+  });
+
+  it('should escape markup in text content', () => {
+    // Act
+    const scene = createScene('<script>alert("x&y")</script>');
+    const actual = svgRenderer.render(scene);
+
+    // Assert
+    expect(actual).not.toContain('<script>');
+    expect(actual).toContain('&lt;script&gt;');
+    expect(actual).toContain('&amp;');
+  });
+});

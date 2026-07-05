@@ -18,7 +18,7 @@ export interface SvgSlide {
  * @param deck - The resolved deck to render.
  * @returns One SVG document per slide, in deck order.
  */
-export function renderDeckToSvg(deck: ResolvedDeck): readonly SvgSlide[] {
+export function renderDeck(deck: ResolvedDeck): readonly SvgSlide[] {
   return scenesFromDeck(deck).map((scene) => ({
     slideId: scene.id,
     svg: svgRenderer.render(scene),
