@@ -1,0 +1,9 @@
+{
+  "name": "@auto-deck/tsconfig",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@tsconfig/strictest": "2.0.8"
+  }
+}
