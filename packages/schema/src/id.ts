@@ -29,11 +29,11 @@ export function semanticIdSchema<Brand extends string>(pattern: RegExp) {
  *
  * @param prefix - The entity type prefix (e.g. `slide`).
  * @returns An object containing the branded identifier schema and a generator function for new identifiers.
- * @throws {Error} If the prefix is not a lowercase alphabetic string.
+ * @throws {TypeError} If the prefix is not a lowercase alphabetic string.
  */
 export function entityId<Brand extends string>(prefix: string) {
   if (!/^[a-z]+$/.test(prefix)) {
-    throw new Error(`Entity id prefix must be lowercase alphabetic, but got "${prefix}".`);
+    throw new TypeError(`Entity id prefix must be lowercase alphabetic, but got "${prefix}".`);
   }
 
   const schema = z

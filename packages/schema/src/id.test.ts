@@ -31,7 +31,7 @@ describe('entityId', () => {
 
   it.each(['', 'Deck', 'de.ck'])('should throw for the invalid prefix %j', (prefix) => {
     // Act & Assert
-    expect(() => entityId<'TestId'>(prefix)).toThrow();
+    expect(() => entityId<'TestId'>(prefix)).toThrow(TypeError);
   });
 });
 
