@@ -23,13 +23,14 @@ export const pointSchema = z
 export type Point = z.infer<typeof pointSchema>;
 
 /**
- * Creates a validated {@link Point}.
+ * Creates a {@link Point} from already-branded coordinates.
+ * The {@link Emu} brand carries the invariants, so no runtime validation is
+ * needed; untrusted wire input is validated by {@link pointSchema} instead.
  *
  * @param x - The horizontal coordinate in EMU.
  * @param y - The vertical coordinate in EMU.
- * @returns The validated point.
- * @throws {z.ZodError} If a coordinate is not an integer.
+ * @returns The point.
  */
 export function point(x: Emu, y: Emu): Point {
-  return pointSchema.parse({ x, y });
+  return { x, y };
 }

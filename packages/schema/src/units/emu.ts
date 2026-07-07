@@ -36,14 +36,37 @@ export const EMU_PER_POINT = 12_700;
 export const EMU_PER_PIXEL = 9_525;
 
 /**
- * Validates an integer and brands it as an {@link Emu}.
+ * Brands an integer as an {@link Emu}.
+ * Guards with a plain integer check so hot paths avoid a Zod parse per call;
+ * untrusted wire input is validated by {@link emuSchema} instead.
  *
  * @param value - The length in EMU.
- * @returns The validated value branded as {@link Emu}.
- * @throws {z.ZodError} If the value is not an integer.
+ * @returns The value branded as {@link Emu}.
+ * @throws {RangeError} If the value is not an integer.
  */
 export function emu(value: number): Emu {
-  return emuSchema.parse(value);
+  if (!Number.isInteger(value)) {
+    throw new RangeError(`EMU must be an integer, but got ${value}.`);
+  }
+  return value as Emu;
+}
+
+/**
+ * Brands a positive integer as an {@link Emu}.
+ * The single home of the positivity rule shared by measurement factories such
+ * as size and rect; untrusted wire input is validated by
+ * {@link positiveEmuSchema} instead.
+ *
+ * @param value - The length in EMU.
+ * @returns The value branded as {@link Emu}.
+ * @throws {RangeError} If the value is not a positive integer.
+ */
+export function positiveEmu(value: number): Emu {
+  const branded = emu(value);
+  if (branded <= 0) {
+    throw new RangeError(`EMU must be positive, but got ${value}.`);
+  }
+  return branded;
 }
 
 /**
@@ -54,7 +77,7 @@ export function emu(value: number): Emu {
  * @returns The converted length branded as {@link Emu}.
  */
 function fromUnit(value: number, emuPerUnit: number): Emu {
-  return emuSchema.parse(Math.round(value * emuPerUnit));
+  return emu(Math.round(value * emuPerUnit));
 }
 
 /**

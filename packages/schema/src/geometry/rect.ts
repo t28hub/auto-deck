@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import type { Emu } from '../units';
+import { type Emu, positiveEmu } from '../units';
 import { pointSchema } from './point';
 import { sizeSchema } from './size';
 
@@ -15,15 +15,17 @@ export const rectSchema = pointSchema.unwrap().extend(sizeSchema.unwrap().shape)
 export type Rect = z.infer<typeof rectSchema>;
 
 /**
- * Creates a validated {@link Rect}.
+ * Creates a {@link Rect} from already-branded coordinates and dimensions.
+ * Guards positivity via {@link positiveEmu} so hot paths avoid a Zod parse
+ * per call; untrusted wire input is validated by {@link rectSchema} instead.
  *
  * @param x - The left edge in EMU.
  * @param y - The top edge in EMU.
  * @param w - The width in EMU.
  * @param h - The height in EMU.
- * @returns The validated rectangle.
- * @throws {z.ZodError} If a coordinate is not an integer or a dimension is not positive.
+ * @returns The rectangle.
+ * @throws {RangeError} If width or height is not positive.
  */
 export function rect(x: Emu, y: Emu, w: Emu, h: Emu): Rect {
-  return rectSchema.parse({ x, y, w, h });
+  return { x, y, w: positiveEmu(w), h: positiveEmu(h) };
 }

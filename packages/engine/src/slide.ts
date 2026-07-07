@@ -84,9 +84,12 @@ export function resolveSlide(slide: Slide, layout: Layout, area: Rect): ResolveR
       });
       continue;
     }
+    const y = emu(region.y);
+    const w = emu(cell);
+    const h = emu(region.h);
     for (const [index, element] of group.slice(0, count).entries()) {
       const x = region.x + index * (cell + gap);
-      boundsById.set(element.id, rect(emu(x), emu(region.y), emu(cell), emu(region.h)));
+      boundsById.set(element.id, rect(emu(x), y, w, h));
     }
   }
 

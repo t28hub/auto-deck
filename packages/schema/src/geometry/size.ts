@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { type Emu, positiveEmuSchema } from '../units';
+import { type Emu, positiveEmu, positiveEmuSchema } from '../units';
 
 /**
  * Schema for a 2D size in EMU.
@@ -23,13 +23,15 @@ export const sizeSchema = z
 export type Size = z.infer<typeof sizeSchema>;
 
 /**
- * Creates a validated {@link Size}.
+ * Creates a {@link Size} from already-branded dimensions.
+ * Guards positivity via {@link positiveEmu} so hot paths avoid a Zod parse
+ * per call; untrusted wire input is validated by {@link sizeSchema} instead.
  *
  * @param w - The width in EMU.
  * @param h - The height in EMU.
- * @returns The validated size.
- * @throws {z.ZodError} If width or height is not a positive integer.
+ * @returns The size.
+ * @throws {RangeError} If width or height is not positive.
  */
 export function size(w: Emu, h: Emu): Size {
-  return sizeSchema.parse({ w, h });
+  return { w: positiveEmu(w), h: positiveEmu(h) };
 }

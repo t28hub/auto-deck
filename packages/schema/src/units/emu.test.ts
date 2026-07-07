@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EMU_PER_INCH, EMU_PER_PIXEL, EMU_PER_POINT, emu, inches, pixels, points, toPixels } from './emu';
+import { EMU_PER_INCH, EMU_PER_PIXEL, EMU_PER_POINT, emu, inches, pixels, points, positiveEmu, toPixels } from './emu';
 
 describe('emu', () => {
   it.each([{ value: 0 }, { value: 1 }, { value: 9525 }, { value: -9525 }])('should brand the integer $value as EMU', ({
@@ -18,7 +18,26 @@ describe('emu', () => {
     { value: Number.POSITIVE_INFINITY, description: 'Infinity' },
   ])('should reject $description', ({ value }) => {
     // Act & Assert
-    expect(() => emu(value)).toThrow();
+    expect(() => emu(value)).toThrow(RangeError);
+  });
+});
+
+describe('positiveEmu', () => {
+  it.each([{ value: 1 }, { value: 9525 }])('should brand the positive integer $value as EMU', ({ value }) => {
+    // Act
+    const actual = positiveEmu(value);
+
+    // Assert
+    expect(actual).toBe(value);
+  });
+
+  it.each([
+    { value: 0, description: 'zero' },
+    { value: -9525, description: 'a negative integer' },
+    { value: 1.5, description: 'a non-integer' },
+  ])('should reject $description', ({ value }) => {
+    // Act & Assert
+    expect(() => positiveEmu(value)).toThrow(RangeError);
   });
 });
 
