@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import { brandedIdSchema } from '../id';
+import { semanticIdSchema } from '../id';
 import { lengthSchema } from './length';
 
 /**
  * Schema for a slot identifier, unique within its layout.
  */
-export const slotIdSchema = brandedIdSchema<'SlotId'>();
+export const slotIdSchema = semanticIdSchema<'SlotId'>(/^slot-[a-z0-9][a-z0-9-]*$/);
 
 /**
  * A slot identifier, unique within its layout.
@@ -35,7 +35,7 @@ export type LengthRect = z.infer<typeof lengthRectSchema>;
 export const flowSchema = z
   .object({
     gap: lengthSchema,
-    max: z.number().int().positive().optional(),
+    max: z.int().positive().optional(),
   })
   .readonly();
 

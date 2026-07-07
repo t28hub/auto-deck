@@ -1,4 +1,4 @@
-import type { Element, Id, Layout, Rect, Slide, SlotId } from '@auto-deck/schema';
+import type { Element, ElementId, Layout, Rect, Slide, SlotId } from '@auto-deck/schema';
 import { emu, rect } from '@auto-deck/schema';
 import type { ResolveDiagnostic, ResolveResult } from './diagnostic';
 import type { ResolvedElement } from './element';
@@ -39,7 +39,7 @@ export function resolveSlide(slide: Slide, layout: Layout, area: Rect): ResolveR
   // Compute the absolute bounds for each slot-bound element up front. A slot
   // without flow behaves like a flow slot holding exactly one element.
   const slotsById = new Map(layout.slots.map((slot) => [slot.id, slot] as const));
-  const boundsById = new Map<Id, Rect>();
+  const boundsById = new Map<ElementId, Rect>();
   for (const [slotId, group] of groups) {
     const slot = slotsById.get(slotId);
     if (slot === undefined) {

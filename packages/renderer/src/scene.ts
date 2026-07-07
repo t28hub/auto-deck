@@ -1,4 +1,4 @@
-import type { Id, Rect, Size } from '@auto-deck/schema';
+import type { ElementId, Rect, Size, SlideId } from '@auto-deck/schema';
 
 /**
  * A content node in a scene: a uniform tree the renderers fold over.
@@ -14,7 +14,7 @@ export interface TextNode {
   /**
    * The id of the element this node was built from.
    */
-  readonly id: Id;
+  readonly id: ElementId;
 
   /**
    * The bounding box of the text, in EMU.
@@ -39,7 +39,7 @@ export interface Scene {
   /**
    * The id of the slide this scene was built from.
    */
-  readonly id: Id;
+  readonly id: SlideId;
 
   /**
    * The canvas (world) the scene is laid out in, in EMU.

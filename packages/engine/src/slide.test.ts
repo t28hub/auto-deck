@@ -5,13 +5,13 @@ import { resolveSlide } from './slide';
 const AREA = rect(pixels(0), pixels(0), pixels(1280), pixels(720));
 
 const TITLE_SLOT = {
-  id: 'title',
+  id: 'slot-title',
   styleToken: 'title',
   rect: { x: { ratio: 0 }, y: { ratio: 0 }, w: { ratio: 1 }, h: { ratio: 0.2 } },
 };
 
 const FLOW_SLOT = {
-  id: 'body',
+  id: 'slot-body',
   styleToken: 'body',
   rect: { x: { ratio: 0 }, y: { ratio: 0.28 }, w: { ratio: 1 }, h: { ratio: 0.6 } },
   flow: { gap: { ratio: 0.02 } },
@@ -28,14 +28,14 @@ function createLayout(slots: readonly unknown[]): Layout {
  * Creates a valid fixture slide in wire format.
  */
 function createSlide(elements: readonly unknown[]): Slide {
-  return slideSchema.parse({ id: 'slide-1', layoutId: 'layout-1', elements });
+  return slideSchema.parse({ id: 'slide_000000000001', layoutId: 'layout-1', elements });
 }
 
 describe('resolveSlide', () => {
   it('should fill a slot-bound element with the slot region', () => {
     // Arrange
     const layout = createLayout([TITLE_SLOT]);
-    const slide = createSlide([{ id: 'el-1', type: 'text', slot: 'title', text: 'Hello' }]);
+    const slide = createSlide([{ id: 'el_000000000001', type: 'text', slot: 'slot-title', text: 'Hello' }]);
 
     // Act
     const actual = resolveSlide(slide, layout, AREA);
@@ -55,9 +55,9 @@ describe('resolveSlide', () => {
     // Arrange
     const layout = createLayout([FLOW_SLOT]);
     const slide = createSlide([
-      { id: 'a', type: 'text', slot: 'body', text: 'A' },
-      { id: 'b', type: 'text', slot: 'body', text: 'B' },
-      { id: 'c', type: 'text', slot: 'body', text: 'C' },
+      { id: 'el_00000000000a', type: 'text', slot: 'slot-body', text: 'A' },
+      { id: 'el_00000000000b', type: 'text', slot: 'slot-body', text: 'B' },
+      { id: 'el_00000000000c', type: 'text', slot: 'slot-body', text: 'C' },
     ]);
 
     // Act
@@ -76,9 +76,9 @@ describe('resolveSlide', () => {
     // Arrange
     const layout = createLayout([{ ...FLOW_SLOT, flow: { gap: { ratio: 0.02 }, max: 2 } }]);
     const slide = createSlide([
-      { id: 'a', type: 'text', slot: 'body', text: 'A' },
-      { id: 'b', type: 'text', slot: 'body', text: 'B' },
-      { id: 'c', type: 'text', slot: 'body', text: 'C' },
+      { id: 'el_00000000000a', type: 'text', slot: 'slot-body', text: 'A' },
+      { id: 'el_00000000000b', type: 'text', slot: 'slot-body', text: 'B' },
+      { id: 'el_00000000000c', type: 'text', slot: 'slot-body', text: 'C' },
     ]);
 
     // Act
@@ -86,15 +86,15 @@ describe('resolveSlide', () => {
 
     // Assert
     assert(!actual.success, 'Expected slide resolution to fail due to slot overfill');
-    expect(actual.diagnostics).toContainEqual(expect.objectContaining({ code: 'slot-overfilled', slot: 'body' }));
+    expect(actual.diagnostics).toContainEqual(expect.objectContaining({ code: 'slot-overfilled', slot: 'slot-body' }));
   });
 
   it('should report slot-overfilled when a flowless slot holds more than one element', () => {
     // Arrange
     const layout = createLayout([TITLE_SLOT]);
     const slide = createSlide([
-      { id: 'a', type: 'text', slot: 'title', text: 'A' },
-      { id: 'b', type: 'text', slot: 'title', text: 'B' },
+      { id: 'el_00000000000a', type: 'text', slot: 'slot-title', text: 'A' },
+      { id: 'el_00000000000b', type: 'text', slot: 'slot-title', text: 'B' },
     ]);
 
     // Act
@@ -102,13 +102,13 @@ describe('resolveSlide', () => {
 
     // Assert
     assert(!actual.success, 'Expected slide resolution to fail due to slot overfill');
-    expect(actual.diagnostics).toContainEqual(expect.objectContaining({ code: 'slot-overfilled', slot: 'title' }));
+    expect(actual.diagnostics).toContainEqual(expect.objectContaining({ code: 'slot-overfilled', slot: 'slot-title' }));
   });
 
   it('should report unknown-slot for an element bound to a missing slot', () => {
     // Arrange
     const layout = createLayout([TITLE_SLOT]);
-    const slide = createSlide([{ id: 'el-1', type: 'text', slot: 'ghost', text: 'X' }]);
+    const slide = createSlide([{ id: 'el_000000000001', type: 'text', slot: 'slot-ghost', text: 'X' }]);
 
     // Act
     const actual = resolveSlide(slide, layout, AREA);
@@ -116,7 +116,7 @@ describe('resolveSlide', () => {
     // Assert
     assert(!actual.success, 'Expected slide resolution to fail due to unknown slot');
     expect(actual.diagnostics).toContainEqual(
-      expect.objectContaining({ code: 'unknown-slot', elementId: 'el-1', slot: 'ghost' }),
+      expect.objectContaining({ code: 'unknown-slot', elementId: 'el_000000000001', slot: 'slot-ghost' }),
     );
   });
 
@@ -124,7 +124,7 @@ describe('resolveSlide', () => {
     // Arrange
     const layout = createLayout([TITLE_SLOT]);
     const slide = createSlide([
-      { id: 'el-1', type: 'text', slot: 'title', bounds: { x: 0, y: 0, w: 9525, h: 9525 }, text: 'X' },
+      { id: 'el_000000000001', type: 'text', slot: 'slot-title', bounds: { x: 0, y: 0, w: 9525, h: 9525 }, text: 'X' },
     ]);
 
     // Act
@@ -133,30 +133,32 @@ describe('resolveSlide', () => {
     // Assert
     assert(!actual.success, 'Expected slide resolution to fail due to conflicting geometry');
     expect(actual.diagnostics).toContainEqual(
-      expect.objectContaining({ code: 'conflicting-geometry', elementId: 'el-1' }),
+      expect.objectContaining({ code: 'conflicting-geometry', elementId: 'el_000000000001' }),
     );
   });
 
   it('should report missing-geometry when an element has neither a slot nor bounds', () => {
     // Arrange
     const layout = createLayout([TITLE_SLOT]);
-    const slide = createSlide([{ id: 'el-1', type: 'text', text: 'X' }]);
+    const slide = createSlide([{ id: 'el_000000000001', type: 'text', text: 'X' }]);
 
     // Act
     const actual = resolveSlide(slide, layout, AREA);
 
     // Assert
     assert(!actual.success, 'Expected slide resolution to fail due to missing geometry');
-    expect(actual.diagnostics).toContainEqual(expect.objectContaining({ code: 'missing-geometry', elementId: 'el-1' }));
+    expect(actual.diagnostics).toContainEqual(
+      expect.objectContaining({ code: 'missing-geometry', elementId: 'el_000000000001' }),
+    );
   });
 
   it('should report invalid-geometry when a slot resolves to a non-positive cell', () => {
     // Arrange
     const layout = createLayout([{ ...FLOW_SLOT, flow: { gap: { ratio: 0.9 } } }]);
     const slide = createSlide([
-      { id: 'a', type: 'text', slot: 'body', text: 'A' },
-      { id: 'b', type: 'text', slot: 'body', text: 'B' },
-      { id: 'c', type: 'text', slot: 'body', text: 'C' },
+      { id: 'el_00000000000a', type: 'text', slot: 'slot-body', text: 'A' },
+      { id: 'el_00000000000b', type: 'text', slot: 'slot-body', text: 'B' },
+      { id: 'el_00000000000c', type: 'text', slot: 'slot-body', text: 'C' },
     ]);
 
     // Act
@@ -164,7 +166,7 @@ describe('resolveSlide', () => {
 
     // Assert
     assert(!actual.success, 'Expected slide resolution to fail due to invalid geometry');
-    expect(actual.diagnostics).toContainEqual(expect.objectContaining({ code: 'invalid-geometry', slot: 'body' }));
+    expect(actual.diagnostics).toContainEqual(expect.objectContaining({ code: 'invalid-geometry', slot: 'slot-body' }));
   });
 
   it('should pass a free element through with its own bounds', () => {
@@ -176,7 +178,7 @@ describe('resolveSlide', () => {
       w: pixels(30),
       h: pixels(40),
     };
-    const slide = createSlide([{ id: 'el-1', type: 'text', bounds, text: 'X' }]);
+    const slide = createSlide([{ id: 'el_000000000001', type: 'text', bounds, text: 'X' }]);
 
     // Act
     const actual = resolveSlide(slide, layout, AREA);
@@ -191,8 +193,8 @@ describe('resolveSlide', () => {
     // Arrange
     const layout = createLayout([TITLE_SLOT]);
     const slide = createSlide([
-      { id: 'free', type: 'text', bounds: { x: 0, y: 0, w: 9525, h: 9525 }, text: 'F' },
-      { id: 'bound', type: 'text', slot: 'title', text: 'B' },
+      { id: 'el_00000000free', type: 'text', bounds: { x: 0, y: 0, w: 9525, h: 9525 }, text: 'F' },
+      { id: 'el_0000000bound', type: 'text', slot: 'slot-title', text: 'B' },
     ]);
 
     // Act
@@ -200,6 +202,6 @@ describe('resolveSlide', () => {
 
     // Assert
     assert(actual.success, 'Expected slide resolution to succeed');
-    expect(actual.value.elements.map((element) => element.id)).toEqual(['free', 'bound']);
+    expect(actual.value.elements.map((element) => element.id)).toEqual(['el_00000000free', 'el_0000000bound']);
   });
 });

@@ -1,4 +1,4 @@
-import type { Id, LayoutId, SlotId } from '@auto-deck/schema';
+import type { ElementId, LayoutId, SlideId, SlotId } from '@auto-deck/schema';
 
 /**
  * The outcome of a resolution step.
@@ -13,13 +13,13 @@ export type ResolveResult<T> =
  */
 export type ResolveDiagnostic = { readonly message: string } & (
   | { readonly code: 'duplicate-layout-id'; readonly layoutId: LayoutId }
-  | { readonly code: 'duplicate-slide-id'; readonly slideId: Id }
-  | { readonly code: 'duplicate-element-id'; readonly elementId: Id }
-  | { readonly code: 'unknown-layout'; readonly slideId: Id; readonly layoutId: LayoutId }
-  | { readonly code: 'unknown-slot'; readonly slideId: Id; readonly elementId: Id; readonly slot: SlotId }
-  | { readonly code: 'conflicting-geometry'; readonly slideId: Id; readonly elementId: Id }
-  | { readonly code: 'missing-geometry'; readonly slideId: Id; readonly elementId: Id }
-  | { readonly code: 'slot-overfilled'; readonly slideId: Id; readonly slot: SlotId }
-  | { readonly code: 'invalid-geometry'; readonly slideId: Id; readonly slot: SlotId }
+  | { readonly code: 'duplicate-slide-id'; readonly slideId: SlideId }
+  | { readonly code: 'duplicate-element-id'; readonly elementId: ElementId }
+  | { readonly code: 'unknown-layout'; readonly slideId: SlideId; readonly layoutId: LayoutId }
+  | { readonly code: 'unknown-slot'; readonly slideId: SlideId; readonly elementId: ElementId; readonly slot: SlotId }
+  | { readonly code: 'conflicting-geometry'; readonly slideId: SlideId; readonly elementId: ElementId }
+  | { readonly code: 'missing-geometry'; readonly slideId: SlideId; readonly elementId: ElementId }
+  | { readonly code: 'slot-overfilled'; readonly slideId: SlideId; readonly slot: SlotId }
+  | { readonly code: 'invalid-geometry'; readonly slideId: SlideId; readonly slot: SlotId }
   | { readonly code: 'invalid-content-area' }
 );

@@ -1,5 +1,5 @@
 import type { Scene } from '@auto-deck/renderer';
-import { idSchema, pixels, rect, WIDESCREEN_16_9 } from '@auto-deck/schema';
+import { elementIdSchema, pixels, rect, slideIdSchema, WIDESCREEN_16_9 } from '@auto-deck/schema';
 import { assert, describe, expect, it } from 'vitest';
 import { parseSvg } from '../test/parse-svg';
 import { svgRenderer } from './renderer';
@@ -9,12 +9,12 @@ import { svgRenderer } from './renderer';
  */
 function createScene(text: string): Scene {
   return {
-    id: idSchema.parse('slide-1'),
+    id: slideIdSchema.parse('slide_000000000001'),
     canvas: WIDESCREEN_16_9,
     children: [
       {
         kind: 'text',
-        id: idSchema.parse('el-1'),
+        id: elementIdSchema.parse('el_000000000001'),
         bounds: rect(pixels(0), pixels(0), pixels(1280), pixels(144)),
         text,
         children: [],
@@ -33,7 +33,7 @@ describe('svgRenderer', () => {
     const parsed = parseSvg(actual);
     expect(parsed.tagName).toBe('svg');
     expect(parsed.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
-    expect(parsed.querySelector('title')?.textContent).toBe('slide-1');
+    expect(parsed.querySelector('title')?.textContent).toBe('slide_000000000001');
     expect(parsed.querySelector('text')?.textContent).toBe('Hello');
   });
 

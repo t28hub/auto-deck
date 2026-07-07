@@ -1,4 +1,4 @@
-import { idSchema, pixels, rect } from '@auto-deck/schema';
+import { elementId, pixels, rect } from '@auto-deck/schema';
 import { describe, expect, it } from 'vitest';
 import type { TextNode } from './scene';
 import { renderScene, type SceneVisitor } from './visitor';
@@ -9,7 +9,7 @@ import { renderScene, type SceneVisitor } from './visitor';
 function textNode(text: string, children: readonly TextNode[] = []): TextNode {
   return {
     kind: 'text',
-    id: idSchema.parse(`node-${text}`),
+    id: elementId(),
     bounds: rect(pixels(0), pixels(0), pixels(10), pixels(10)),
     text,
     children,

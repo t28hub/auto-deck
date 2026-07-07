@@ -1,12 +1,11 @@
 import { z } from 'zod';
-import { brandedIdSchema } from '../id';
-import { type Slot, slotSchema } from './slot';
+import { semanticIdSchema } from '../id';
+import { slotSchema } from './slot';
 
 /**
- * Schema for a layout identifier.
- * Branded so a slide can reference the layout it uses with type safety.
+ * Schema for a layout identifier, unique within its deck.
  */
-export const layoutIdSchema = brandedIdSchema<'LayoutId'>();
+export const layoutIdSchema = semanticIdSchema<'LayoutId'>(/^layout-[a-z0-9][a-z0-9-]*$/);
 
 /**
  * A layout identifier.
@@ -29,16 +28,3 @@ export const layoutSchema = z
  * A named slide archetype defined by a set of slots.
  */
 export type Layout = z.infer<typeof layoutSchema>;
-
-/**
- * Creates a validated {@link Layout}.
- *
- * @param id - The layout id, unique within its deck.
- * @param name - The human-readable layout name.
- * @param slots - The slots that make up the layout.
- * @returns The validated layout.
- * @throws {z.ZodError} If a field is invalid.
- */
-export function layout(id: LayoutId, name: string, slots: readonly Slot[]): Layout {
-  return layoutSchema.parse({ id, name, slots });
-}

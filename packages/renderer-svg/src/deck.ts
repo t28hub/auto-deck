@@ -1,13 +1,13 @@
 import type { ResolvedDeck } from '@auto-deck/engine';
 import { scenesFromDeck } from '@auto-deck/renderer';
-import type { Id } from '@auto-deck/schema';
+import type { SlideId } from '@auto-deck/schema';
 import { svgRenderer } from './renderer';
 
 /**
  * One slide rendered as a standalone SVG document.
  */
 export interface SvgSlide {
-  readonly slideId: Id;
+  readonly slideId: SlideId;
   readonly svg: string;
 }
 

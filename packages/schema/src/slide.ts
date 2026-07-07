@@ -1,7 +1,17 @@
 import { z } from 'zod';
 import { elementSchema } from './element';
-import { idSchema } from './id';
+import { entityId } from './id';
 import { layoutIdSchema } from './layout';
+
+/**
+ * Schema for a slide identifier, and a generator for new slide identifiers.
+ */
+export const { schema: slideIdSchema, generate: slideId } = entityId<'SlideId'>('slide');
+
+/**
+ * A slide identifier.
+ */
+export type SlideId = z.infer<typeof slideIdSchema>;
 
 /**
  * Schema for a slide, a single page of a deck.
@@ -11,7 +21,7 @@ import { layoutIdSchema } from './layout';
  */
 export const slideSchema = z
   .object({
-    id: idSchema,
+    id: slideIdSchema,
     layoutId: layoutIdSchema,
     elements: z.array(elementSchema).readonly(),
   })

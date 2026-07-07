@@ -1,5 +1,13 @@
 import type { ResolvedDeck, ResolvedElement } from '@auto-deck/engine';
-import { idSchema, pixels, rect, WIDESCREEN_16_9 } from '@auto-deck/schema';
+import {
+  canvasIdSchema,
+  deckIdSchema,
+  elementIdSchema,
+  pixels,
+  rect,
+  slideIdSchema,
+  WIDESCREEN_16_9,
+} from '@auto-deck/schema';
 import { describe, expect, it } from 'vitest';
 import { scenesFromDeck } from './transformer';
 
@@ -11,20 +19,20 @@ const BOUNDS = rect(pixels(0), pixels(0), pixels(1280), pixels(144));
  */
 function createResolvedDeck(): ResolvedDeck {
   return {
-    id: idSchema.parse('deck-1'),
+    id: deckIdSchema.parse('deck_000000000001'),
     canvas: {
-      id: idSchema.parse('canvas-1'),
+      id: canvasIdSchema.parse('canvas_000000000001'),
       displayName: 'Widescreen 16:9',
       size: WIDESCREEN_16_9,
     },
     slides: [
       {
-        id: idSchema.parse('slide-1'),
-        elements: [{ id: idSchema.parse('el-1'), type: 'text', text: 'Hello', bounds: BOUNDS }],
+        id: slideIdSchema.parse('slide_000000000001'),
+        elements: [{ id: elementIdSchema.parse('el_000000000001'), type: 'text', text: 'Hello', bounds: BOUNDS }],
       },
       {
-        id: idSchema.parse('slide-2'),
-        elements: [{ id: idSchema.parse('el-2'), type: 'text', text: 'World', bounds: BOUNDS }],
+        id: slideIdSchema.parse('slide_000000000002'),
+        elements: [{ id: elementIdSchema.parse('el_000000000002'), type: 'text', text: 'World', bounds: BOUNDS }],
       },
     ],
   };
@@ -38,8 +46,8 @@ describe('scenesFromDeck', () => {
 
     // Assert
     const expected = [
-      { id: 'slide-1', elementId: 'el-1', text: 'Hello' },
-      { id: 'slide-2', elementId: 'el-2', text: 'World' },
+      { id: 'slide_000000000001', elementId: 'el_000000000001', text: 'Hello' },
+      { id: 'slide_000000000002', elementId: 'el_000000000002', text: 'World' },
     ].map(({ id, elementId, text }) => ({
       id,
       canvas: WIDESCREEN_16_9,
@@ -51,13 +59,13 @@ describe('scenesFromDeck', () => {
   it('should throw for an element kind the transformer does not handle', () => {
     // Arrange
     const unknownElement = {
-      id: idSchema.parse('el-x'),
+      id: elementIdSchema.parse('el_00000000000x'),
       type: 'unknown',
       bounds: BOUNDS,
     } as unknown as ResolvedElement;
     const deck: ResolvedDeck = {
       ...createResolvedDeck(),
-      slides: [{ id: idSchema.parse('slide-1'), elements: [unknownElement] }],
+      slides: [{ id: slideIdSchema.parse('slide_000000000001'), elements: [unknownElement] }],
     };
 
     // Act & Assert

@@ -9,9 +9,9 @@ import { renderDeck } from './deck';
  */
 function resolveFixtureDeck(): ResolvedDeck {
   const deck = deckSchema.parse({
-    id: 'deck-1',
+    id: 'deck_000000000001',
     canvas: {
-      id: 'canvas-1',
+      id: 'canvas_000000000001',
       displayName: 'Widescreen 16:9',
       size: WIDESCREEN_16_9,
     },
@@ -21,7 +21,7 @@ function resolveFixtureDeck(): ResolvedDeck {
         name: 'Layout',
         slots: [
           {
-            id: 'title',
+            id: 'slot-title',
             styleToken: 'title',
             rect: { x: { ratio: 0 }, y: { ratio: 0 }, w: { ratio: 1 }, h: { ratio: 0.2 } },
           },
@@ -30,14 +30,14 @@ function resolveFixtureDeck(): ResolvedDeck {
     ],
     slides: [
       {
-        id: 'slide-1',
+        id: 'slide_000000000001',
         layoutId: 'layout-1',
-        elements: [{ id: 'el-1', type: 'text', slot: 'title', text: 'Hello' }],
+        elements: [{ id: 'el_000000000001', type: 'text', slot: 'slot-title', text: 'Hello' }],
       },
       {
-        id: 'slide-2',
+        id: 'slide_000000000002',
         layoutId: 'layout-1',
-        elements: [{ id: 'el-2', type: 'text', slot: 'title', text: 'World' }],
+        elements: [{ id: 'el_000000000002', type: 'text', slot: 'slot-title', text: 'World' }],
       },
     ],
   });
@@ -53,7 +53,7 @@ describe('renderDeck', () => {
     const actual = renderDeck(deck);
 
     // Assert
-    expect(actual.map((slide) => slide.slideId)).toEqual(['slide-1', 'slide-2']);
+    expect(actual.map((slide) => slide.slideId)).toEqual(['slide_000000000001', 'slide_000000000002']);
     const texts = actual.map((slide) => parseSvg(slide.svg).querySelector('text')?.textContent);
     expect(texts).toEqual(['Hello', 'World']);
   });

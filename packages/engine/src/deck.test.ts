@@ -3,7 +3,7 @@ import { assert, describe, expect, it } from 'vitest';
 import { resolveDeck } from './deck';
 
 const TITLE_SLOT = {
-  id: 'title',
+  id: 'slot-title',
   styleToken: 'title',
   rect: { x: { ratio: 0 }, y: { ratio: 0 }, w: { ratio: 1 }, h: { ratio: 0.2 } },
 };
@@ -11,9 +11,9 @@ const TITLE_SLOT = {
 const LAYOUT = { id: 'layout-1', name: 'Layout', slots: [TITLE_SLOT] };
 
 const SLIDE = {
-  id: 'slide-1',
+  id: 'slide_000000000001',
   layoutId: 'layout-1',
-  elements: [{ id: 'el-1', type: 'text', slot: 'title', text: 'Hello' }],
+  elements: [{ id: 'el_000000000001', type: 'text', slot: 'slot-title', text: 'Hello' }],
 };
 
 /**
@@ -21,9 +21,9 @@ const SLIDE = {
  */
 function makeDeck(slides: readonly unknown[], layouts: readonly unknown[] = [LAYOUT]): Deck {
   return deckSchema.parse({
-    id: 'deck-1',
+    id: 'deck_000000000001',
     canvas: {
-      id: 'canvas-1',
+      id: 'canvas_000000000001',
       displayName: 'Widescreen 16:9',
       size: WIDESCREEN_16_9,
     },
@@ -93,13 +93,13 @@ describe('resolveDeck', () => {
     // Assert
     assert(!actual.success, 'Expected deck resolution to fail due to a duplicate slide id');
     expect(actual.diagnostics).toContainEqual(
-      expect.objectContaining({ code: 'duplicate-slide-id', slideId: 'slide-1' }),
+      expect.objectContaining({ code: 'duplicate-slide-id', slideId: 'slide_000000000001' }),
     );
   });
 
   it('should report duplicate-element-id across slides', () => {
     // Arrange
-    const deck = makeDeck([SLIDE, { ...SLIDE, id: 'slide-2' }]);
+    const deck = makeDeck([SLIDE, { ...SLIDE, id: 'slide_000000000002' }]);
 
     // Act
     const actual = resolveDeck(deck);
@@ -107,13 +107,13 @@ describe('resolveDeck', () => {
     // Assert
     assert(!actual.success, 'Expected deck resolution to fail due to a duplicate element id');
     expect(actual.diagnostics).toContainEqual(
-      expect.objectContaining({ code: 'duplicate-element-id', elementId: 'el-1' }),
+      expect.objectContaining({ code: 'duplicate-element-id', elementId: 'el_000000000001' }),
     );
   });
 
   it('should report unknown-layout for a slide referencing a missing layout', () => {
     // Arrange
-    const deck = makeDeck([{ ...SLIDE, layoutId: 'ghost' }]);
+    const deck = makeDeck([{ ...SLIDE, layoutId: 'layout-ghost' }]);
 
     // Act
     const actual = resolveDeck(deck);
@@ -121,7 +121,7 @@ describe('resolveDeck', () => {
     // Assert
     assert(!actual.success, 'Expected deck resolution to fail due to an unknown layout');
     expect(actual.diagnostics).toContainEqual(
-      expect.objectContaining({ code: 'unknown-layout', slideId: 'slide-1', layoutId: 'ghost' }),
+      expect.objectContaining({ code: 'unknown-layout', slideId: 'slide_000000000001', layoutId: 'layout-ghost' }),
     );
   });
 
@@ -140,9 +140,9 @@ describe('resolveDeck', () => {
   it('should propagate diagnostics from slide resolution', () => {
     // Arrange
     const slide = {
-      id: 'slide-1',
+      id: 'slide_000000000001',
       layoutId: 'layout-1',
-      elements: [{ id: 'el-1', type: 'text', text: 'X' }],
+      elements: [{ id: 'el_000000000001', type: 'text', text: 'X' }],
     };
     const deck = makeDeck([slide]);
 
@@ -152,13 +152,17 @@ describe('resolveDeck', () => {
     // Assert
     assert(!actual.success, 'Expected deck resolution to fail due to a slide-level diagnostic');
     expect(actual.diagnostics).toContainEqual(
-      expect.objectContaining({ code: 'missing-geometry', elementId: 'el-1', slideId: 'slide-1' }),
+      expect.objectContaining({
+        code: 'missing-geometry',
+        elementId: 'el_000000000001',
+        slideId: 'slide_000000000001',
+      }),
     );
   });
 
   it('should collect every diagnostic instead of stopping at the first', () => {
     // Arrange
-    const deck = makeDeck([SLIDE, SLIDE, { ...SLIDE, layoutId: 'ghost' }]);
+    const deck = makeDeck([SLIDE, SLIDE, { ...SLIDE, layoutId: 'layout-ghost' }]);
 
     // Act
     const actual = resolveDeck(deck);
