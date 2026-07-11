@@ -1,4 +1,9 @@
 {
   "extends": "@auto-deck/tsconfig/react.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
   "include": ["src", "vite.config.ts"]
 }
