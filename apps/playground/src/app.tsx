@@ -1,4 +1,4 @@
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useDeferredValue, useMemo, useState } from 'react';
 import { compile } from './compile';
 import { SAMPLE_DECK } from './sample';
 
@@ -8,19 +8,21 @@ import { SAMPLE_DECK } from './sample';
  */
 export function App(): ReactElement {
   const [source, setSource] = useState(SAMPLE_DECK);
-  // Every render is caused by a source change, so memoizing would never hit.
-  const result = compile(source);
+  // Deferring keeps keystrokes responsive: the urgent render re-renders with
+  // the previous deferred source, where the memo hits, and the compile runs
+  // once at low priority when typing pauses.
+  const deferredSource = useDeferredValue(source);
+  const result = useMemo(() => compile(deferredSource), [deferredSource]);
 
   return (
     <main className="playground">
-      <section className="editor">
-        <textarea
-          value={source}
-          onChange={(event) => setSource(event.target.value)}
-          spellCheck={false}
-          aria-label="Deck JSON"
-        />
-      </section>
+      <textarea
+        className="editor"
+        value={source}
+        onChange={(event) => setSource(event.target.value)}
+        spellCheck={false}
+        aria-label="Deck JSON"
+      />
       <section className="preview">
         {result.success ? (
           result.slides.map((slide) => (
