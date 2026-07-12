@@ -6,8 +6,26 @@ import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 import { compile } from './compile';
 import { SAMPLE_DECK } from './sample';
+
+/**
+ * Hosts one rendered slide by injecting its standalone SVG document; the
+ * viewBox lets CSS scale it to the container width. The canvas stays white in
+ * both themes: it is document content, not UI.
+ *
+ * @param svg - The slide's SVG document string.
+ * @param className - Extra classes merged onto the host element.
+ */
+function SlideCanvas({ svg, className }: { svg: string; className?: string }): ReactElement {
+  return (
+    <div
+      className={cn('[&>svg]:h-auto [&>svg]:w-full [&>svg]:border [&>svg]:border-border [&>svg]:bg-white', className)}
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
+}
 
 /**
  * The playground: a tabbed navigator (slides, outline, and the deck JSON
@@ -85,9 +103,6 @@ export function App(): ReactElement {
             maxSize="320px"
             onResize={(size) => setNavigatorOpen(size.inPixels > 0)}
           >
-            {/* The tabs own the panel inset and a min-w matching the panel's
-                minSize, so collapsing clips the content at the panel edge
-                instead of squashing it or leaving a padding strip behind. */}
             <Tabs defaultValue="slides" className="h-full min-w-50 px-3 pb-3">
               <TabsList className="w-full py-1">
                 <TabsTrigger value="slides">Slides</TabsTrigger>
@@ -95,8 +110,17 @@ export function App(): ReactElement {
                 <TabsTrigger value="json">JSON</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="slides" className="pt-1.5 text-muted-foreground">
-                Slide thumbnails will appear here.
+              <TabsContent value="slides" className="min-h-0 overflow-y-auto pt-1.5">
+                <ol className="flex flex-col gap-3" aria-label="Slide list">
+                  {slides.map((slide, index) => (
+                    <li key={slide.slideId} className="flex items-start gap-2">
+                      <span className="w-3.5 pt-0.5 text-right font-mono text-xs text-muted-foreground">
+                        {index + 1}
+                      </span>
+                      <SlideCanvas svg={slide.svg} className="min-w-0 flex-1 [&>svg]:rounded-md" />
+                    </li>
+                  ))}
+                </ol>
               </TabsContent>
 
               <TabsContent value="outline" className="pt-1.5 text-muted-foreground">
@@ -121,12 +145,7 @@ export function App(): ReactElement {
             <section className="flex h-full flex-col gap-4 overflow-y-auto" aria-label="Slide preview">
               {slides.map((slide) => (
                 <figure key={slide.slideId}>
-                  {/* The slide canvas stays white in both themes: it is
-                      document content, not UI. */}
-                  <div
-                    className="[&>svg]:h-auto [&>svg]:w-full [&>svg]:rounded-lg [&>svg]:border [&>svg]:border-border [&>svg]:bg-white [&>svg]:shadow-sm"
-                    dangerouslySetInnerHTML={{ __html: slide.svg }}
-                  />
+                  <SlideCanvas svg={slide.svg} className="[&>svg]:rounded-lg [&>svg]:shadow-sm" />
                   <figcaption className="mt-1 text-xs text-muted-foreground">{slide.slideId}</figcaption>
                 </figure>
               ))}
