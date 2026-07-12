@@ -4,15 +4,8 @@ import { type ReactElement, useDeferredValue, useMemo, useState } from 'react';
 import { usePanelRef } from 'react-resizable-panels';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { cn } from '@/lib/utils';
 import { compile } from './compile';
 import { SAMPLE_DECK } from './sample';
-
-/**
- * The shared frame of the bordered panels (editor and error box), so a
- * radius, border, or type-size restyle happens in one place.
- */
-const frameClass = 'rounded-lg border p-3 text-[13px]';
 
 /**
  * The playground: a deck JSON editor, the rendered slides, and the compile
@@ -55,7 +48,7 @@ export function App(): ReactElement {
   }
 
   return (
-    <main className="flex h-full min-w-225 flex-col p-4">
+    <main className="flex h-full min-w-225 flex-col">
       <header className="pb-4">
         <Button
           variant="ghost"
@@ -71,6 +64,7 @@ export function App(): ReactElement {
       <div className="min-h-0 flex-1">
         <ResizablePanelGroup animated className="gap-4">
           <ResizablePanel
+            className="px-3 pt-1.5 pb-3"
             panelRef={navigatorRef}
             collapsible
             defaultSize="240px"
@@ -79,7 +73,7 @@ export function App(): ReactElement {
             onResize={(size) => setNavigatorOpen(size.inPixels > 0)}
           >
             <textarea
-              className={cn(frameClass, 'block h-full w-full resize-none border-zinc-300 font-mono')}
+              className="block h-full w-full min-w-80 resize-none font-mono text-sm"
               value={source}
               onChange={(event) => setSource(event.target.value)}
               spellCheck={false}
@@ -110,9 +104,7 @@ export function App(): ReactElement {
               {result.success ? (
                 <p className="text-[13px] text-green-700">{result.slides.length} slide(s) rendered.</p>
               ) : (
-                <pre className={cn(frameClass, 'whitespace-pre-wrap border-red-300 bg-red-50 text-red-700')}>
-                  {result.message}
-                </pre>
+                <pre className="whitespace-pre-wrap bg-red-50 text-red-700">{result.message}</pre>
               )}
             </section>
           </ResizablePanel>
