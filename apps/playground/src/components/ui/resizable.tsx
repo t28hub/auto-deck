@@ -2,11 +2,26 @@ import * as ResizablePrimitive from 'react-resizable-panels';
 
 import { cn } from '@/lib/utils';
 
-function ResizablePanelGroup({ className, ...props }: ResizablePrimitive.GroupProps) {
+function ResizablePanelGroup({
+  className,
+  animated = false,
+  ...props
+}: ResizablePrimitive.GroupProps & {
+  animated?: boolean;
+}) {
   return (
     <ResizablePrimitive.Group
       data-slot="resizable-panel-group"
-      className={cn('flex h-full w-full aria-[orientation=vertical]:flex-col', className)}
+      className={cn(
+        'flex h-full w-full aria-[orientation=vertical]:flex-col',
+        // The library sizes panels through an inline flex-grow, so
+        // transitioning that property animates programmatic collapse/expand;
+        // pointer (active) and keyboard (focus) resizes suppress the
+        // transition so they stay 1:1.
+        animated &&
+          '[&:not(:has([data-separator=active],[data-separator=focus]))>[data-panel]]:[transition:flex-grow_300ms]',
+        className,
+      )}
       {...props}
     />
   );
