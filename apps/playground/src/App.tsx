@@ -4,13 +4,15 @@ import { type ReactElement, useDeferredValue, useMemo, useState } from 'react';
 import { usePanelRef } from 'react-resizable-panels';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { compile } from './compile';
 import { SAMPLE_DECK } from './sample';
 
 /**
- * The playground: a deck JSON editor, the rendered slides, and the compile
- * diagnostics in three resizable columns; the navigator column also opens
- * and closes from the header button.
+ * The playground: a tabbed navigator (slides, outline, and the deck JSON
+ * editor), the rendered slides, and the compile diagnostics in three
+ * resizable columns; the navigator column also opens and closes from the
+ * header button.
  */
 export function App(): ReactElement {
   const [source, setSource] = useState(SAMPLE_DECK);
@@ -64,7 +66,6 @@ export function App(): ReactElement {
       <div className="min-h-0 flex-1">
         <ResizablePanelGroup animated className="gap-4">
           <ResizablePanel
-            className="px-3 pt-1.5 pb-3"
             panelRef={navigatorRef}
             collapsible
             defaultSize="240px"
@@ -72,13 +73,34 @@ export function App(): ReactElement {
             maxSize="320px"
             onResize={(size) => setNavigatorOpen(size.inPixels > 0)}
           >
-            <textarea
-              className="block h-full w-full min-w-80 resize-none font-mono text-sm"
-              value={source}
-              onChange={(event) => setSource(event.target.value)}
-              spellCheck={false}
-              aria-label="Deck JSON"
-            />
+            {/* The tabs own the panel inset and a min-w matching the panel's
+                minSize, so collapsing clips the content at the panel edge
+                instead of squashing it or leaving a padding strip behind. */}
+            <Tabs defaultValue="slides" className="h-full min-w-50 px-3 pb-3">
+              <TabsList className="w-full py-1">
+                <TabsTrigger value="slides">Slides</TabsTrigger>
+                <TabsTrigger value="outline">Outline</TabsTrigger>
+                <TabsTrigger value="json">JSON</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="slides" className="pt-1.5 text-muted-foreground">
+                Slide thumbnails will appear here.
+              </TabsContent>
+
+              <TabsContent value="outline" className="pt-1.5 text-muted-foreground">
+                The deck outline will appear here.
+              </TabsContent>
+
+              <TabsContent value="json" className="pt-1.5">
+                <textarea
+                  className="block h-full w-full min-w-80 resize-none font-mono text-sm"
+                  value={source}
+                  onChange={(event) => setSource(event.target.value)}
+                  spellCheck={false}
+                  aria-label="Deck JSON"
+                />
+              </TabsContent>
+            </Tabs>
           </ResizablePanel>
 
           <ResizableHandle />
