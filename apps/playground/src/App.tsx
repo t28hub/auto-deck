@@ -1,7 +1,8 @@
 import type { SvgSlide } from '@auto-deck/renderer-svg';
-import { PanelLeft } from 'lucide-react';
+import { Moon, PanelLeft, Sun } from 'lucide-react';
 import { type ReactElement, useDeferredValue, useMemo, useState } from 'react';
 import { usePanelRef } from 'react-resizable-panels';
+import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -36,6 +37,8 @@ export function App(): ReactElement {
   const navigatorRef = usePanelRef();
   const [navigatorOpen, setNavigatorOpen] = useState(true);
 
+  const { resolvedTheme, setTheme } = useTheme();
+
   function toggleNavigator(): void {
     const navigator = navigatorRef.current;
     if (navigator === null) {
@@ -51,7 +54,7 @@ export function App(): ReactElement {
 
   return (
     <main className="flex h-full min-w-225 flex-col">
-      <header className="pb-4">
+      <header className="flex items-center justify-between pb-4">
         <Button
           variant="ghost"
           size="icon"
@@ -60,6 +63,15 @@ export function App(): ReactElement {
           aria-label="Toggle navigator"
         >
           <PanelLeft className="stroke-1" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+          aria-label="Toggle theme"
+        >
+          {resolvedTheme === 'dark' ? <Sun className="stroke-1" /> : <Moon className="stroke-1" />}
         </Button>
       </header>
 
@@ -109,11 +121,13 @@ export function App(): ReactElement {
             <section className="flex h-full flex-col gap-4 overflow-y-auto" aria-label="Slide preview">
               {slides.map((slide) => (
                 <figure key={slide.slideId}>
+                  {/* The slide canvas stays white in both themes: it is
+                      document content, not UI. */}
                   <div
-                    className="[&>svg]:h-auto [&>svg]:w-full [&>svg]:rounded-lg [&>svg]:border [&>svg]:border-zinc-300 [&>svg]:bg-white [&>svg]:shadow-sm"
+                    className="[&>svg]:h-auto [&>svg]:w-full [&>svg]:rounded-lg [&>svg]:border [&>svg]:border-border [&>svg]:bg-white [&>svg]:shadow-sm"
                     dangerouslySetInnerHTML={{ __html: slide.svg }}
                   />
-                  <figcaption className="mt-1 text-xs text-zinc-500">{slide.slideId}</figcaption>
+                  <figcaption className="mt-1 text-xs text-muted-foreground">{slide.slideId}</figcaption>
                 </figure>
               ))}
             </section>
@@ -124,9 +138,11 @@ export function App(): ReactElement {
           <ResizablePanel defaultSize="280px" minSize="240px" maxSize="360px">
             <section className="h-full overflow-y-auto" aria-label="Diagnostics">
               {result.success ? (
-                <p className="text-[13px] text-green-700">{result.slides.length} slide(s) rendered.</p>
+                <p className="text-[13px] text-green-700 dark:text-green-400">
+                  {result.slides.length} slide(s) rendered.
+                </p>
               ) : (
-                <pre className="whitespace-pre-wrap bg-red-50 text-red-700">{result.message}</pre>
+                <pre className="whitespace-pre-wrap bg-destructive/10 text-destructive">{result.message}</pre>
               )}
             </section>
           </ResizablePanel>

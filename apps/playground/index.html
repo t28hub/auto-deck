@@ -4,9 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Auto Deck Playground</title>
+    <script>
+      // Apply the persisted theme before the first paint so a dark-theme
+      // reload does not flash light; the ThemeProvider takes over from here.
+      // The key must match the storageKey prop passed in main.tsx. Storage
+      // access is best-effort: it can throw where site data is blocked, and
+      // the null then falls back to the OS preference.
+      let theme = null;
+      try {
+        theme = localStorage.getItem('auto-deck-theme');
+      } catch {
+        // Storage access can throw in some environments, e.g. when privacy mode blocks site data.
+      }
+
+      if (theme === 'dark' || (theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
   </head>
   <body class="h-full">
     <div id="root" class="h-full"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
