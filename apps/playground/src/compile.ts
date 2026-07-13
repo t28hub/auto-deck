@@ -1,43 +1,23 @@
 import { resolveDeck } from '@auto-deck/engine';
 import { renderDeck, type SvgSlide } from '@auto-deck/renderer-svg';
-import { deckSchema } from '@auto-deck/schema';
-import { z } from 'zod';
+import type { Deck } from '@auto-deck/schema';
 
 /**
- * The outcome of compiling deck JSON text into rendered slides.
+ * The outcome of compiling a deck into rendered slides.
  */
 export type CompileResult =
   | { readonly success: true; readonly slides: readonly SvgSlide[] }
   | { readonly success: false; readonly message: string };
 
 /**
- * Runs the same pipeline as the CLI — parse JSON, validate against the deck
- * schema, resolve, render to SVG — and reports every failure as a formatted
- * message instead of exiting.
+ * Resolves the deck and renders it to SVG, reporting resolution failures as a
+ * formatted message instead of throwing.
  *
- * @param source - The deck JSON text.
+ * @param deck - The deck to compile.
  * @returns The rendered slides, or the failure message.
  */
-export function compile(source: string): CompileResult {
-  let data: unknown;
-  try {
-    data = JSON.parse(source);
-  } catch (error) {
-    return {
-      success: false,
-      message: `Invalid JSON\n  ${error instanceof Error ? error.message : String(error)}`,
-    };
-  }
-
-  const parsed = deckSchema.safeParse(data);
-  if (!parsed.success) {
-    return {
-      success: false,
-      message: `Invalid deck\n${z.prettifyError(parsed.error)}`,
-    };
-  }
-
-  const result = resolveDeck(parsed.data);
+export function compile(deck: Deck): CompileResult {
+  const result = resolveDeck(deck);
   if (!result.success) {
     const lines = result.diagnostics.map((diagnostic) => `  [${diagnostic.code}] ${diagnostic.message}`);
     return {

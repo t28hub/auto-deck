@@ -1,0 +1,26 @@
+{
+  "name": "@auto-deck/repository",
+  "version": "0.1.0",
+  "description": "Repository contract and implementations for persisting decks",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@auto-deck/schema": "workspace:*"
+  },
+  "devDependencies": {
+    "@auto-deck/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

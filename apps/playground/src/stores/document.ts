@@ -1,24 +1,24 @@
-import type { SlideId } from '@auto-deck/schema';
+import type { Deck, SlideId } from '@auto-deck/schema';
 import { create } from 'zustand';
-import { SAMPLE_DECK } from '@/sample';
 
 interface DocumentState {
   /**
-   * The deck JSON text.
+   * The deck being edited, or null until one is loaded from the repository.
    */
-  readonly source: string;
+  readonly deck: Deck | null;
 
   /**
    * The slide the user is focused on, or null before the first selection.
-   * May point at a slide the source no longer contains; views simply find no
+   * May point at a slide the deck no longer contains; views simply find no
    * match then.
    */
   readonly selectedSlideId: SlideId | null;
 
   /**
-   * Replaces the deck JSON text.
+   * Makes a deck loaded from the repository the document, dropping the
+   * selection because it belonged to the previous deck.
    */
-  readonly setSource: (source: string) => void;
+  readonly hydrate: (deck: Deck) => void;
 
   /**
    * Marks the slide as the current selection.
@@ -30,8 +30,8 @@ interface DocumentState {
  * Reads the document store, subscribing to the slice picked by the selector.
  */
 export const useDocumentStore = create<DocumentState>()((set) => ({
-  source: SAMPLE_DECK,
+  deck: null,
   selectedSlideId: null,
-  setSource: (source) => set({ source }),
+  hydrate: (deck) => set({ deck, selectedSlideId: null }),
   selectSlide: (slideId) => set({ selectedSlideId: slideId }),
 }));

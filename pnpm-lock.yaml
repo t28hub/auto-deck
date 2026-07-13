@@ -297,6 +297,9 @@ importers:
       '@auto-deck/renderer-svg':
         specifier: workspace:*
         version: link:../../packages/renderer-svg
+      '@auto-deck/repository':
+        specifier: workspace:*
+        version: link:../../packages/repository
       '@auto-deck/schema':
         specifier: workspace:*
         version: link:../../packages/schema
@@ -327,9 +330,6 @@ importers:
       tailwind-merge:
         specifier: 3.6.0
         version: 3.6.0
-      zod:
-        specifier: 'catalog:'
-        version: 4.4.3
       zustand:
         specifier: 'catalog:'
         version: 5.0.14(@types/react@19.2.17)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
@@ -463,6 +463,28 @@ importers:
       happy-dom:
         specifier: 'catalog:'
         version: 20.10.6
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@types/node@25.9.0)(@vitest/coverage-v8@4.1.9)(happy-dom@20.10.6)(vite@8.1.0(@types/node@25.9.0)(jiti@2.7.0))
+
+  packages/repository:
+    dependencies:
+      '@auto-deck/schema':
+        specifier: workspace:*
+        version: link:../schema
+    devDependencies:
+      '@auto-deck/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.9.0
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.9(vitest@4.1.9)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3

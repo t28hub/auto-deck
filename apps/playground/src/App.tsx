@@ -1,12 +1,13 @@
-import type { SvgSlide } from '@auto-deck/renderer-svg';
+import type { Deck } from '@auto-deck/schema';
 import { Moon, PanelLeft, Sun } from 'lucide-react';
-import { type ReactElement, useDeferredValue, useMemo, useState } from 'react';
+import { type ReactElement, useEffect, useMemo, useState } from 'react';
 import { usePanelRef } from 'react-resizable-panels';
 import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
+import { deckRepository, INITIAL_DECK_ID } from '@/repository';
 import { compile } from './compile';
 import { useDocumentStore } from './stores/document';
 
@@ -28,33 +29,53 @@ function SlideCanvas({ svg, className }: { svg: string; className?: string }): R
 }
 
 /**
- * The playground: a tabbed navigator (slides, outline, and the deck JSON
- * editor), the rendered slides, and the compile diagnostics in three
- * resizable columns; the navigator column also opens and closes from the
- * header button.
+ * Loads the initial deck through the repository into the document store, and
+ * shows the editor once it is there.
  */
 export function App(): ReactElement {
-  const source = useDocumentStore((state) => state.source);
-  const setSource = useDocumentStore((state) => state.setSource);
+  const deck = useDocumentStore((state) => state.deck);
+  const hydrate = useDocumentStore((state) => state.hydrate);
+
+  useEffect(() => {
+    void deckRepository.load(INITIAL_DECK_ID).then((loaded) => {
+      if (loaded === null) {
+        console.error(`Deck ${INITIAL_DECK_ID} is not in the repository.`);
+        return;
+      }
+      hydrate(loaded);
+    });
+  }, [hydrate]);
+
+  if (deck === null) {
+    return (
+      <main className="flex h-full items-center justify-center text-muted-foreground" aria-busy>
+        Loading deck…
+      </main>
+    );
+  }
+
+  return <DeckEditor deck={deck} />;
+}
+
+/**
+ * The playground editor: a tabbed navigator (slides, outline, and the deck
+ * JSON view), the rendered slides, and the compile diagnostics in three
+ * resizable columns; the navigator column also opens and closes from the
+ * header button.
+ *
+ * @param deck - The deck being edited.
+ */
+function DeckEditor({ deck }: { deck: Deck }): ReactElement {
   const selectedSlideId = useDocumentStore((state) => state.selectedSlideId);
   const selectSlide = useDocumentStore((state) => state.selectSlide);
-  // Deferring keeps keystrokes responsive: the urgent render re-renders with
-  // the previous deferred source, where the memo hits, and the compile runs
-  // once at low priority when typing pauses.
-  const deferredSource = useDeferredValue(source);
-  const result = useMemo(() => compile(deferredSource), [deferredSource]);
 
-  // Keep the last successful slides so the preview survives the invalid
-  // intermediate states while typing; failures surface in the diagnostics
-  // column instead.
-  const [slides, setSlides] = useState<readonly SvgSlide[]>([]);
-  if (result.success && result.slides !== slides) {
-    setSlides(result.slides);
-  }
+  const result = useMemo(() => compile(deck), [deck]);
+  const slides = result.success ? result.slides : [];
+  const deckJson = useMemo(() => JSON.stringify(deck, null, 2), [deck]);
 
   // The slide the preview shows: the selection while it exists, else the
   // first slide, which covers the initial state and a selection that was
-  // edited out of the source.
+  // edited out of the deck.
   const selectedSlide = slides.find((slide) => slide.slideId === selectedSlideId) ?? slides.at(0);
 
   // The navigator column is both draggable and collapsible: the toggle button
@@ -158,14 +179,8 @@ export function App(): ReactElement {
                 The deck outline will appear here.
               </TabsContent>
 
-              <TabsContent value="json" className="pt-1.5">
-                <textarea
-                  className="block h-full w-full min-w-80 resize-none font-mono text-sm"
-                  value={source}
-                  onChange={(event) => setSource(event.target.value)}
-                  spellCheck={false}
-                  aria-label="Deck JSON"
-                />
+              <TabsContent value="json" className="min-h-0 overflow-auto pt-1.5">
+                <pre className="font-mono text-xs">{deckJson}</pre>
               </TabsContent>
             </Tabs>
           </ResizablePanel>
