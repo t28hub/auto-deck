@@ -8,7 +8,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { compile } from './compile';
-import { SAMPLE_DECK } from './sample';
+import { useDocumentStore } from './stores/document';
 
 /**
  * Hosts one rendered slide by injecting its standalone SVG document; the
@@ -34,7 +34,10 @@ function SlideCanvas({ svg, className }: { svg: string; className?: string }): R
  * header button.
  */
 export function App(): ReactElement {
-  const [source, setSource] = useState(SAMPLE_DECK);
+  const source = useDocumentStore((state) => state.source);
+  const setSource = useDocumentStore((state) => state.setSource);
+  const selectedSlideId = useDocumentStore((state) => state.selectedSlideId);
+  const selectSlide = useDocumentStore((state) => state.selectSlide);
   // Deferring keeps keystrokes responsive: the urgent render re-renders with
   // the previous deferred source, where the memo hits, and the compile runs
   // once at low priority when typing pauses.
@@ -48,6 +51,11 @@ export function App(): ReactElement {
   if (result.success && result.slides !== slides) {
     setSlides(result.slides);
   }
+
+  // The slide the preview shows: the selection while it exists, else the
+  // first slide, which covers the initial state and a selection that was
+  // edited out of the source.
+  const selectedSlide = slides.find((slide) => slide.slideId === selectedSlideId) ?? slides.at(0);
 
   // The navigator column is both draggable and collapsible: the toggle button
   // drives the panel's imperative handle, and onResize keeps the button state
@@ -94,7 +102,7 @@ export function App(): ReactElement {
       </header>
 
       <div className="min-h-0 flex-1">
-        <ResizablePanelGroup animated className="gap-4">
+        <ResizablePanelGroup animated>
           <ResizablePanel
             panelRef={navigatorRef}
             collapsible
@@ -105,21 +113,44 @@ export function App(): ReactElement {
           >
             <Tabs defaultValue="slides" className="h-full min-w-50 px-3 pb-3">
               <TabsList className="w-full py-1">
-                <TabsTrigger value="slides">Slides</TabsTrigger>
-                <TabsTrigger value="outline">Outline</TabsTrigger>
-                <TabsTrigger value="json">JSON</TabsTrigger>
+                <TabsTrigger value="slides" className="text-xs">
+                  Slides
+                </TabsTrigger>
+                <TabsTrigger value="outline" className="text-xs">
+                  Outline
+                </TabsTrigger>
+                <TabsTrigger value="json" className="text-xs">
+                  JSON
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="slides" className="min-h-0 overflow-y-auto pt-1.5">
                 <ol className="flex flex-col gap-3" aria-label="Slide list">
-                  {slides.map((slide, index) => (
-                    <li key={slide.slideId} className="flex items-start gap-2">
-                      <span className="w-3.5 pt-0.5 text-right font-mono text-xs text-muted-foreground">
-                        {index + 1}
-                      </span>
-                      <SlideCanvas svg={slide.svg} className="min-w-0 flex-1 [&>svg]:rounded-md" />
-                    </li>
-                  ))}
+                  {slides.map((slide, index) => {
+                    const isSelected = slide.slideId === selectedSlide?.slideId;
+                    return (
+                      <li key={slide.slideId} className="flex items-start gap-2">
+                        <span className="w-3.5 pt-0.5 text-right font-mono text-xs text-muted-foreground">
+                          {index + 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => selectSlide(slide.slideId)}
+                          aria-current={isSelected}
+                          aria-label={`Select slide ${index + 1}`}
+                          className="min-w-0 flex-1 cursor-pointer rounded-md focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring"
+                        >
+                          <SlideCanvas
+                            svg={slide.svg}
+                            className={cn(
+                              '[&>svg]:rounded-md',
+                              isSelected && '[&>svg]:border-primary [&>svg]:ring-2 [&>svg]:ring-primary/40',
+                            )}
+                          />
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ol>
               </TabsContent>
 
@@ -141,14 +172,9 @@ export function App(): ReactElement {
 
           <ResizableHandle />
 
-          <ResizablePanel minSize="400px">
-            <section className="flex h-full flex-col gap-4 overflow-y-auto" aria-label="Slide preview">
-              {slides.map((slide) => (
-                <figure key={slide.slideId}>
-                  <SlideCanvas svg={slide.svg} className="[&>svg]:rounded-lg [&>svg]:shadow-sm" />
-                  <figcaption className="mt-1 text-xs text-muted-foreground">{slide.slideId}</figcaption>
-                </figure>
-              ))}
+          <ResizablePanel minSize="400px" className="flex items-center">
+            <section className="p-4 overflow-auto" aria-label="Slide preview">
+              {selectedSlide !== undefined && <SlideCanvas svg={selectedSlide.svg} />}
             </section>
           </ResizablePanel>
 
