@@ -6,14 +6,14 @@ import { cn } from '@/lib/utils';
  */
 interface SlideViewProps {
   /**
-   * The slide's SVG document string.
-   */
-  readonly svg: string;
-
-  /**
    * Extra classes merged onto the host element.
    */
   readonly className?: string;
+
+  /**
+   * The slide's SVG document string.
+   */
+  readonly svg: string;
 }
 
 /**
@@ -23,7 +23,7 @@ interface SlideViewProps {
  * @param props - The props for the SlideView component.
  * @returns The element hosting the slide.
  */
-export function SlideView({ svg, className }: SlideViewProps): ReactElement {
+export function SlideView({ className, svg }: SlideViewProps): ReactElement {
   return (
     <div
       className={cn('border border-border bg-white [&>svg]:block [&>svg]:h-auto [&>svg]:w-full', className)}

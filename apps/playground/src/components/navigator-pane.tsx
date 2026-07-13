@@ -52,23 +52,20 @@ export function NavigatorPane({ deck, slides, selectedSlideId }: NavigatorPanePr
       </TabsList>
 
       <TabsContent value="slides" className="min-h-0 overflow-y-auto pt-1.5">
-        <ol className="flex flex-col gap-3" aria-label="Slide list">
+        <ol className="flex flex-col gap-2.5" aria-label="Slide list">
           {slides.map((slide, index) => {
             const isSelected = slide.slideId === selectedSlideId;
             return (
-              <li key={slide.slideId} className="flex items-start gap-2">
-                <span className="w-3.5 pt-0.5 text-right font-mono text-xs text-muted-foreground">{index + 1}</span>
+              <li key={slide.slideId} className={cn('rounded-md transition-colors', isSelected && 'bg-accent')}>
                 <button
                   type="button"
                   onClick={() => selectSlide(slide.slideId)}
-                  aria-current={isSelected}
+                  aria-current={isSelected ? true : undefined}
                   aria-label={`Select slide ${index + 1}`}
-                  className="min-w-0 flex-1 cursor-pointer rounded-md focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring"
+                  className="flex w-full cursor-pointer items-start gap-2 rounded-md p-1.5 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring"
                 >
-                  <SlideView
-                    svg={slide.svg}
-                    className={cn('overflow-hidden rounded-md', isSelected && 'border-primary ring-2 ring-primary/40')}
-                  />
+                  <span className="w-3.5 pt-0.5 text-right font-mono text-xs text-muted-foreground">{index + 1}</span>
+                  <SlideView svg={slide.svg} className="min-w-0 flex-1 overflow-hidden rounded-sm border-border" />
                 </button>
               </li>
             );
