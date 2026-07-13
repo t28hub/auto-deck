@@ -9,8 +9,8 @@ interface DocumentState {
 
   /**
    * The slide the user is focused on, or null before the first selection.
-   * May point at a slide the deck no longer contains; views simply find no
-   * match then.
+   * May point at a slide the deck no longer contains. Consumers decide how
+   * to resolve a stale selection.
    */
   readonly selectedSlideId: SlideId | null;
 

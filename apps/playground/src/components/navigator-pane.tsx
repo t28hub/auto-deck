@@ -1,0 +1,88 @@
+import type { SvgSlide } from '@auto-deck/renderer-svg';
+import type { Deck, SlideId } from '@auto-deck/schema';
+import { type ReactElement, useMemo } from 'react';
+import { SlideView } from '@/components/slide-view';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
+import { useDocumentStore } from '@/stores/document';
+
+/**
+ * Props for the NavigatorPane component.
+ */
+interface NavigatorPaneProps {
+  /**
+   * The deck being edited.
+   */
+  readonly deck: Deck;
+
+  /**
+   * The rendered slides listed in the slides tab.
+   */
+  readonly slides: readonly SvgSlide[];
+
+  /**
+   * The identifier of the slide highlighted as selected.
+   */
+  readonly selectedSlideId: SlideId | undefined;
+}
+
+/**
+ * The navigator with tabs for the slide thumbnails, the outline, and the deck JSON.
+ *
+ * @param props - The props for the NavigatorPane component.
+ * @returns The tabbed navigator.
+ */
+export function NavigatorPane({ deck, slides, selectedSlideId }: NavigatorPaneProps): ReactElement {
+  const selectSlide = useDocumentStore((state) => state.selectSlide);
+
+  const deckJson = useMemo(() => JSON.stringify(deck, null, 2), [deck]);
+
+  return (
+    <Tabs defaultValue="slides" className="h-full px-3 py-2">
+      <TabsList className="w-full">
+        <TabsTrigger value="slides" className="text-xs">
+          Slides
+        </TabsTrigger>
+        <TabsTrigger value="outline" className="text-xs">
+          Outline
+        </TabsTrigger>
+        <TabsTrigger value="json" className="text-xs">
+          JSON
+        </TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="slides" className="min-h-0 overflow-y-auto pt-1.5">
+        <ol className="flex flex-col gap-3" aria-label="Slide list">
+          {slides.map((slide, index) => {
+            const isSelected = slide.slideId === selectedSlideId;
+            return (
+              <li key={slide.slideId} className="flex items-start gap-2">
+                <span className="w-3.5 pt-0.5 text-right font-mono text-xs text-muted-foreground">{index + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => selectSlide(slide.slideId)}
+                  aria-current={isSelected}
+                  aria-label={`Select slide ${index + 1}`}
+                  className="min-w-0 flex-1 cursor-pointer rounded-md focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring"
+                >
+                  <SlideView
+                    svg={slide.svg}
+                    className={cn('overflow-hidden rounded-md', isSelected && 'border-primary ring-2 ring-primary/40')}
+                  />
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </TabsContent>
+
+      <TabsContent value="outline" className="pt-1.5 text-muted-foreground">
+        The deck outline will appear here.
+      </TabsContent>
+
+      <TabsContent value="json" className="min-h-0 overflow-auto pt-1.5">
+        <pre className="font-mono text-xs">{deckJson}</pre>
+      </TabsContent>
+    </Tabs>
+  );
+}
