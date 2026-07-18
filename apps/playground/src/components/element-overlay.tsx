@@ -132,6 +132,8 @@ export function ElementOverlay({ className, scene, selectedElementId }: ElementO
       aria-label="Slide elements"
       onPointerDown={() => selectElement(null)}
     >
+      {/* non-scaling-stroke cancels the viewBox scale but not an ancestor CSS
+          scale, so the selection stroke divides by --zoom to stay two pixels. */}
       {scene.children.map((node) => (
         <rect
           key={node.id}
@@ -141,7 +143,10 @@ export function ElementOverlay({ className, scene, selectedElementId }: ElementO
           width={node.bounds.w}
           height={node.bounds.h}
           vectorEffect="non-scaling-stroke"
-          className={cn('cursor-move fill-transparent', node.id === selectedElementId && 'stroke-ring stroke-2')}
+          className={cn(
+            'cursor-move fill-transparent',
+            node.id === selectedElementId && 'stroke-ring [stroke-width:calc(2/var(--zoom,1))]',
+          )}
           onPointerDown={(event) => handlePointerDown(node, event)}
           onPointerMove={handlePointerMove}
           onPointerUp={endDrag}
