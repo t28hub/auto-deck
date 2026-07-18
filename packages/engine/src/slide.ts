@@ -13,6 +13,8 @@ export type ResolvedSlide = Omit<Slide, 'layoutId' | 'elements'> & {
 
 /**
  * Resolves a slide's elements against its layout into absolute geometry.
+ * A slot provides an element's base geometry, and the element's authored
+ * bounds, when present, override it.
  *
  * @param slide - The slide to resolve.
  * @param layout - The layout the slide uses.
@@ -23,10 +25,13 @@ export function resolveSlide(slide: Slide, layout: Layout, area: Rect): ResolveR
   const { id: slideId, elements } = slide;
   const diagnostics: ResolveDiagnostic[] = [];
 
-  // Group the slot-bound elements by slot, preserving element order.
+  // Group the slot-bound elements by slot, preserving element order. An
+  // element with an authored override still occupies its cell and counts
+  // toward the slot's capacity, so overriding one element never reflows its
+  // siblings.
   const groups = new Map<SlotId, Element[]>();
   for (const element of elements) {
-    if (element.slot !== undefined && element.bounds === undefined) {
+    if (element.slot !== undefined) {
       const group = groups.get(element.slot);
       if (group) {
         group.push(element);
@@ -88,27 +93,21 @@ export function resolveSlide(slide: Slide, layout: Layout, area: Rect): ResolveR
     const w = emu(cell);
     const h = emu(region.h);
     for (const [index, element] of group.slice(0, count).entries()) {
+      // An overridden element keeps its seat (the index), but its slot-derived
+      // bounds would only be discarded.
+      if (element.bounds !== undefined) {
+        continue;
+      }
       const x = region.x + index * (cell + gap);
       boundsById.set(element.id, rect(emu(x), y, w, h));
     }
   }
 
-  // Emit elements in their original order.
+  // Emit elements in their original order, with authored bounds taking
+  // precedence over the slot-provided geometry.
   const resolved: ResolvedElement[] = [];
   for (const element of elements) {
-    const hasSlot = element.slot !== undefined;
-    const hasBounds = element.bounds !== undefined;
-
-    if (hasSlot && hasBounds) {
-      diagnostics.push({
-        code: 'conflicting-geometry',
-        slideId,
-        elementId: element.id,
-        message: `Element "${element.id}" on slide "${slideId}" has both a slot and bounds; exactly one is allowed.`,
-      });
-      continue;
-    }
-    if (!hasSlot && !hasBounds) {
+    if (element.slot === undefined && element.bounds === undefined) {
       diagnostics.push({
         code: 'missing-geometry',
         slideId,

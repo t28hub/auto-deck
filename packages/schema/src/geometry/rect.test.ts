@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { emu } from '../units';
-import { rect, rectSchema } from './rect';
+import { rect, rectEquals, rectSchema } from './rect';
 
 describe('rectSchema', () => {
   it('should parse a valid rectangle', () => {
@@ -33,5 +33,46 @@ describe('rect', () => {
   it('should reject a non-positive dimension', () => {
     // Act & Assert
     expect(() => rect(emu(0), emu(0), emu(9525), emu(0))).toThrow(RangeError);
+  });
+});
+
+describe('rectEquals', () => {
+  it('should return true when comparing a rectangle to itself', () => {
+    // Arrange
+    const base = rect(emu(0), emu(9525), emu(9525), emu(19_050));
+
+    // Act
+    const actual = rectEquals(base, base);
+
+    // Assert
+    expect(actual).toBe(true);
+  });
+
+  it('should return true when comparing two identical rectangles', () => {
+    // Arrange
+    const rect1 = rect(emu(0), emu(9525), emu(9525), emu(19_050));
+    const rect2 = rect(emu(0), emu(9525), emu(9525), emu(19_050));
+
+    // Act
+    const actual = rectEquals(rect1, rect2);
+
+    // Assert
+    expect(actual).toBe(true);
+  });
+
+  it.each([
+    rect(emu(9525), emu(9525), emu(9525), emu(19_050)),
+    rect(emu(0), emu(0), emu(9525), emu(19_050)),
+    rect(emu(0), emu(9525), emu(19_050), emu(19_050)),
+    rect(emu(0), emu(9525), emu(9525), emu(9525)),
+  ])('should return false when comparing two different rectangles', (other) => {
+    // Arrange
+    const base = rect(emu(0), emu(9525), emu(9525), emu(19_050));
+
+    // Act
+    const actual = rectEquals(base, other);
+
+    // Assert
+    expect(actual).toBe(false);
   });
 });

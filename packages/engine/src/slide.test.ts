@@ -17,6 +17,8 @@ const FLOW_SLOT = {
   flow: { gap: { ratio: 0.02 } },
 };
 
+const AUTHORED_BOUNDS = rect(pixels(10), pixels(20), pixels(30), pixels(40));
+
 /**
  * Creates a valid fixture layout in wire format.
  */
@@ -120,20 +122,73 @@ describe('resolveSlide', () => {
     );
   });
 
-  it('should report conflicting-geometry when an element has both a slot and bounds', () => {
+  it('should let authored bounds override the slot geometry', () => {
     // Arrange
     const layout = createLayout([TITLE_SLOT]);
     const slide = createSlide([
-      { id: 'el_000000000001', type: 'text', slot: 'slot-title', bounds: { x: 0, y: 0, w: 9525, h: 9525 }, text: 'X' },
+      { id: 'el_000000000001', type: 'text', slot: 'slot-title', bounds: AUTHORED_BOUNDS, text: 'X' },
     ]);
 
     // Act
     const actual = resolveSlide(slide, layout, AREA);
 
     // Assert
-    assert(!actual.success, 'Expected slide resolution to fail due to conflicting geometry');
+    assert(actual.success, 'Expected slide resolution to succeed');
+    expect(actual.value.elements[0]?.bounds).toEqual(AUTHORED_BOUNDS);
+  });
+
+  it('should keep an overridden element occupying its flow cell', () => {
+    // Arrange
+    const layout = createLayout([FLOW_SLOT]);
+    const slide = createSlide([
+      { id: 'el_00000000000a', type: 'text', slot: 'slot-body', text: 'A' },
+      { id: 'el_00000000000b', type: 'text', slot: 'slot-body', bounds: AUTHORED_BOUNDS, text: 'B' },
+      { id: 'el_00000000000c', type: 'text', slot: 'slot-body', text: 'C' },
+    ]);
+
+    // Act
+    const actual = resolveSlide(slide, layout, AREA);
+
+    // Assert
+    assert(actual.success, 'Expected slide resolution to succeed');
+    const [a, b, c] = actual.value.elements.map((element) => element.bounds);
+    // The siblings keep the three-cell distribution as if B never moved.
+    expect(a?.x).toEqual(pixels(0));
+    expect(c?.x).toEqual(pixels(870.4));
+    expect(b).toEqual(AUTHORED_BOUNDS);
+  });
+
+  it('should count an overridden element toward the slot capacity', () => {
+    // Arrange
+    const layout = createLayout([{ ...FLOW_SLOT, flow: { gap: { ratio: 0.02 }, max: 2 } }]);
+    const slide = createSlide([
+      { id: 'el_00000000000a', type: 'text', slot: 'slot-body', text: 'A' },
+      { id: 'el_00000000000b', type: 'text', slot: 'slot-body', bounds: AUTHORED_BOUNDS, text: 'B' },
+      { id: 'el_00000000000c', type: 'text', slot: 'slot-body', text: 'C' },
+    ]);
+
+    // Act
+    const actual = resolveSlide(slide, layout, AREA);
+
+    // Assert
+    assert(!actual.success, 'Expected slide resolution to fail due to slot overfill');
+    expect(actual.diagnostics).toContainEqual(expect.objectContaining({ code: 'slot-overfilled', slot: 'slot-body' }));
+  });
+
+  it('should report unknown-slot even when the element has authored bounds', () => {
+    // Arrange
+    const layout = createLayout([TITLE_SLOT]);
+    const slide = createSlide([
+      { id: 'el_000000000001', type: 'text', slot: 'slot-ghost', bounds: AUTHORED_BOUNDS, text: 'X' },
+    ]);
+
+    // Act
+    const actual = resolveSlide(slide, layout, AREA);
+
+    // Assert
+    assert(!actual.success, 'Expected slide resolution to fail due to unknown slot');
     expect(actual.diagnostics).toContainEqual(
-      expect.objectContaining({ code: 'conflicting-geometry', elementId: 'el_000000000001' }),
+      expect.objectContaining({ code: 'unknown-slot', elementId: 'el_000000000001', slot: 'slot-ghost' }),
     );
   });
 
@@ -172,20 +227,14 @@ describe('resolveSlide', () => {
   it('should pass a free element through with its own bounds', () => {
     // Arrange
     const layout = createLayout([TITLE_SLOT]);
-    const bounds = {
-      x: pixels(10),
-      y: pixels(20),
-      w: pixels(30),
-      h: pixels(40),
-    };
-    const slide = createSlide([{ id: 'el_000000000001', type: 'text', bounds, text: 'X' }]);
+    const slide = createSlide([{ id: 'el_000000000001', type: 'text', bounds: AUTHORED_BOUNDS, text: 'X' }]);
 
     // Act
     const actual = resolveSlide(slide, layout, AREA);
 
     // Assert
     assert(actual.success, 'Expected slide resolution to succeed');
-    expect(actual.value.elements[0]?.bounds).toEqual(bounds);
+    expect(actual.value.elements[0]?.bounds).toEqual(AUTHORED_BOUNDS);
     expect(actual.value.elements[0]).not.toHaveProperty('slot');
   });
 

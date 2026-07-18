@@ -294,6 +294,9 @@ importers:
       '@auto-deck/engine':
         specifier: workspace:*
         version: link:../../packages/engine
+      '@auto-deck/renderer':
+        specifier: workspace:*
+        version: link:../../packages/renderer
       '@auto-deck/renderer-svg':
         specifier: workspace:*
         version: link:../../packages/renderer-svg

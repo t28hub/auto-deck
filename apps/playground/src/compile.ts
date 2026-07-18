@@ -1,12 +1,30 @@
 import { resolveDeck } from '@auto-deck/engine';
-import { renderDeck, type SvgSlide } from '@auto-deck/renderer-svg';
+import { type Scene, scenesFromDeck } from '@auto-deck/renderer';
+import { svgRenderer } from '@auto-deck/renderer-svg';
 import type { Deck } from '@auto-deck/schema';
+
+/**
+ * One slide compiled for the playground, pairing the rendered SVG document
+ * with the scene it was rendered from so interactive layers can reach the
+ * element bounds.
+ */
+export interface CompiledSlide {
+  /**
+   * The slide's standalone SVG document.
+   */
+  readonly svg: string;
+
+  /**
+   * The scene the SVG was rendered from.
+   */
+  readonly scene: Scene;
+}
 
 /**
  * The outcome of compiling a deck into rendered slides.
  */
 export type CompileResult =
-  | { readonly success: true; readonly slides: readonly SvgSlide[] }
+  | { readonly success: true; readonly slides: readonly CompiledSlide[] }
   | { readonly success: false; readonly message: string };
 
 /**
@@ -26,5 +44,11 @@ export function compile(deck: Deck): CompileResult {
     };
   }
 
-  return { success: true, slides: renderDeck(result.value) };
+  return {
+    success: true,
+    slides: scenesFromDeck(result.value).map((scene) => ({
+      svg: svgRenderer.render(scene),
+      scene,
+    })),
+  };
 }

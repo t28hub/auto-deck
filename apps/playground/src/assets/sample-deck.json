@@ -43,6 +43,12 @@
       "layoutId": "layout-title-content",
       "elements": [
         { "id": "el_h4t8k2m9x1q5", "type": "text", "slot": "slot-title", "text": "Auto Deck" },
+        {
+          "id": "el_p7d2r4a6g8m1",
+          "type": "text",
+          "bounds": { "x": 8200000, "y": 5600000, "w": 3200000, "h": 900000 },
+          "text": "Drag me"
+        },
         { "id": "el_a9s3d7f1g5h2", "type": "text", "slot": "slot-body", "text": "Schema" },
         { "id": "el_z2x6c4v8b3n7", "type": "text", "slot": "slot-body", "text": "Engine" },
         { "id": "el_q5w1e9r4t8y2", "type": "text", "slot": "slot-body", "text": "Renderer" }

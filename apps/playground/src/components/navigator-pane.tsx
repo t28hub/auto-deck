@@ -1,6 +1,6 @@
-import type { SvgSlide } from '@auto-deck/renderer-svg';
 import type { Deck, SlideId } from '@auto-deck/schema';
 import { type ReactElement, useMemo } from 'react';
+import type { CompiledSlide } from '@/compile';
 import { SlideView } from '@/components/slide-view';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
@@ -18,7 +18,7 @@ interface NavigatorPaneProps {
   /**
    * The rendered slides listed in the slides tab.
    */
-  readonly slides: readonly SvgSlide[];
+  readonly slides: readonly CompiledSlide[];
 
   /**
    * The identifier of the slide highlighted as selected.
@@ -34,8 +34,6 @@ interface NavigatorPaneProps {
  */
 export function NavigatorPane({ deck, slides, selectedSlideId }: NavigatorPaneProps): ReactElement {
   const selectSlide = useDocumentStore((state) => state.selectSlide);
-
-  const deckJson = useMemo(() => JSON.stringify(deck, null, 2), [deck]);
 
   return (
     <Tabs defaultValue="slides" className="h-full px-3 py-2">
@@ -54,18 +52,21 @@ export function NavigatorPane({ deck, slides, selectedSlideId }: NavigatorPanePr
       <TabsContent value="slides" className="min-h-0 overflow-y-auto pt-1.5">
         <ol className="flex flex-col gap-2.5" aria-label="Slide list">
           {slides.map((slide, index) => {
-            const isSelected = slide.slideId === selectedSlideId;
+            const isSelected = slide.scene.id === selectedSlideId;
             return (
-              <li key={slide.slideId} className={cn('rounded-md transition-colors', isSelected && 'bg-accent')}>
+              <li key={slide.scene.id} className={cn('rounded-md transition-colors', isSelected && 'bg-accent')}>
                 <button
                   type="button"
-                  onClick={() => selectSlide(slide.slideId)}
+                  onClick={() => selectSlide(slide.scene.id)}
                   aria-current={isSelected ? true : undefined}
                   aria-label={`Select slide ${index + 1}`}
                   className="flex w-full cursor-pointer items-start gap-2 rounded-md p-1.5 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring"
                 >
                   <span className="w-3.5 pt-0.5 text-right font-mono text-xs text-muted-foreground">{index + 1}</span>
-                  <SlideView svg={slide.svg} className="min-w-0 flex-1 overflow-hidden rounded-sm border-border" />
+                  <SlideView
+                    className="min-w-0 flex-1 overflow-hidden rounded-sm border border-border"
+                    svg={slide.svg}
+                  />
                 </button>
               </li>
             );
@@ -78,8 +79,21 @@ export function NavigatorPane({ deck, slides, selectedSlideId }: NavigatorPanePr
       </TabsContent>
 
       <TabsContent value="json" className="min-h-0 overflow-auto pt-1.5">
-        <pre className="font-mono text-xs">{deckJson}</pre>
+        <DeckJson deck={deck} />
       </TabsContent>
     </Tabs>
   );
+}
+
+/**
+ * Renders the deck as formatted JSON.
+ * A separate component keeps the serialization off deck edits made while the
+ * JSON tab is hidden, because inactive tab panels are unmounted.
+ *
+ * @param deck - The deck to serialize.
+ * @returns The formatted JSON block.
+ */
+function DeckJson({ deck }: { readonly deck: Deck }): ReactElement {
+  const deckJson = useMemo(() => JSON.stringify(deck, null, 2), [deck]);
+  return <pre className="font-mono text-xs">{deckJson}</pre>;
 }

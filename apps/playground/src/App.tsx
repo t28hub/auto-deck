@@ -47,6 +47,7 @@ export function App(): ReactElement {
  */
 function DeckEditor({ deck }: { deck: Deck }): ReactElement {
   const selectedSlideId = useDocumentStore((state) => state.selectedSlideId);
+  const selectedElementId = useDocumentStore((state) => state.selectedElementId);
 
   const result = useMemo(() => compile(deck), [deck]);
   const slides = result.success ? result.slides : [];
@@ -54,7 +55,7 @@ function DeckEditor({ deck }: { deck: Deck }): ReactElement {
   // The slide the editor shows: the selection while it exists, else the
   // first slide, which covers the initial state and a selection that was
   // edited out of the deck.
-  const selectedSlide = slides.find((slide) => slide.slideId === selectedSlideId) ?? slides.at(0);
+  const selectedSlide = slides.find((slide) => slide.scene.id === selectedSlideId) ?? slides.at(0);
 
   // The navigator column is both draggable and collapsible: the toggle button
   // drives the panel's imperative handle, and onResize keeps the button state
@@ -91,20 +92,20 @@ function DeckEditor({ deck }: { deck: Deck }): ReactElement {
           >
             {/* min-w-50 equals the panel's 200px minSize, keeping the content width fixed while the panel collapses. */}
             <div className="h-full min-w-50">
-              <NavigatorPane deck={deck} slides={slides} selectedSlideId={selectedSlide?.slideId} />
+              <NavigatorPane deck={deck} slides={slides} selectedSlideId={selectedSlide?.scene.id} />
             </div>
           </ResizablePanel>
 
           <ResizableHandle />
 
           <ResizablePanel minSize="400px">
-            <EditorPane slide={selectedSlide} />
+            <EditorPane slide={selectedSlide} selectedElementId={selectedElementId} />
           </ResizablePanel>
 
           <ResizableHandle />
 
           <ResizablePanel defaultSize="280px" minSize="240px" maxSize="360px">
-            <InspectorPane result={result} />
+            <InspectorPane />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

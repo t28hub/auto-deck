@@ -26,7 +26,7 @@ interface SlideViewProps {
 export function SlideView({ className, svg }: SlideViewProps): ReactElement {
   return (
     <div
-      className={cn('border border-border bg-white [&>svg]:block [&>svg]:h-auto [&>svg]:w-full', className)}
+      className={cn('bg-white [&>svg]:block [&>svg]:h-auto [&>svg]:w-full', className)}
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );

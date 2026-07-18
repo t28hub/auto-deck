@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@auto-deck/engine": "workspace:*",
+    "@auto-deck/renderer": "workspace:*",
     "@auto-deck/renderer-svg": "workspace:*",
     "@auto-deck/repository": "workspace:*",
     "@auto-deck/schema": "workspace:*",

@@ -29,3 +29,14 @@ export type Rect = z.infer<typeof rectSchema>;
 export function rect(x: Emu, y: Emu, w: Emu, h: Emu): Rect {
   return { x, y, w: positiveEmu(w), h: positiveEmu(h) };
 }
+
+/**
+ * Compares two rectangles component-wise.
+ *
+ * @param a - The rectangle to compare.
+ * @param b - The rectangle to compare against.
+ * @returns Whether both rectangles hold the same values.
+ */
+export function rectEquals(a: Rect, b: Rect): boolean {
+  return a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
+}

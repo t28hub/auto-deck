@@ -15,9 +15,10 @@ export type ElementId = z.infer<typeof elementIdSchema>;
 
 /**
  * Schema for the fields shared by every element.
- * An element either binds to a layout slot (slot) and inherits its geometry, or
- * is freely positioned (bounds). Enforcing exactly one of them is deferred to
- * the engine's deck resolution.
+ * A layout slot (slot) provides an element's base geometry, and authored
+ * bounds (bounds) override it while the slot binding stays for a later reset.
+ * A freely positioned element carries bounds alone. Requiring at least one of
+ * them is deferred to the engine's deck resolution.
  */
 export const baseElementSchema = z.object({
   id: elementIdSchema,

@@ -21,7 +21,7 @@ interface InspectorPaneProps {
 export function InspectorPane({ className }: InspectorPaneProps): ReactElement {
   return (
     <section className={cn('flex h-full flex-col', className)} aria-label="Inspector">
-      <Tabs defaultValue="chat" className="min-h-0 flex-1 px-3 py-2">
+      <Tabs defaultValue="ai" className="min-h-0 flex-1 px-3 py-2">
         <TabsList className="w-full">
           <TabsTrigger value="style" className="text-xs">
             Style
