@@ -1,5 +1,5 @@
 import type { Scene, SceneNode } from '@auto-deck/renderer';
-import { type ElementId, emu, type Rect, rect } from '@auto-deck/schema';
+import { type ElementId, emu, type Rect, rect, toPixels } from '@auto-deck/schema';
 import { cn } from '@auto-deck/ui/lib/utils';
 import { type PointerEvent, type ReactElement, useRef } from 'react';
 import { useDocumentStore } from '@/stores/document';
@@ -68,9 +68,11 @@ interface ElementOverlayProps {
  * The interaction layer over a rendered slide: a transparent SVG with one hit
  * area per element for selecting and dragging. Dragging writes the element's
  * bounds to the deck on every pointer move, so the rendered slide underneath
- * follows the pointer live. The overlay draws in EMU while the rendered slide
- * draws in pixels; they align because both viewBoxes start at 0 0 and span the
- * same canvas.
+ * follows the pointer live. The overlay draws in canvas pixels like the
+ * rendered slide; drawing in raw EMU would exceed the 2^25 fixed-point limit
+ * browsers place on SVG user-space coordinates once an element moves a few
+ * slide-widths off the canvas, freezing the hit area while the slide follows
+ * the pointer.
  *
  * @param props - The props for the ElementOverlay component.
  * @returns The overlay element.
@@ -137,8 +139,8 @@ export function ElementOverlay({
 
   return (
     <svg
-      className={cn('touch-none', className)}
-      viewBox={`0 0 ${scene.canvas.w} ${scene.canvas.h}`}
+      className={cn('touch-none overflow-visible', className)}
+      viewBox={`0 0 ${toPixels(scene.canvas.w)} ${toPixels(scene.canvas.h)}`}
       aria-label="Slide elements"
       onPointerDown={() => selectElement(null)}
     >
@@ -151,14 +153,14 @@ export function ElementOverlay({
           role="button"
           aria-label={`Element ${node.text}`}
           data-element-id={node.id}
-          x={node.bounds.x}
-          y={node.bounds.y}
-          width={node.bounds.w}
-          height={node.bounds.h}
+          x={toPixels(node.bounds.x)}
+          y={toPixels(node.bounds.y)}
+          width={toPixels(node.bounds.w)}
+          height={toPixels(node.bounds.h)}
           vectorEffect="non-scaling-stroke"
           className={cn(
             'cursor-move fill-transparent',
-            node.id === selectedElementId && 'stroke-ring [stroke-width:calc(2/var(--zoom,1))]',
+            node.id === selectedElementId && 'stroke-ring stroke-[calc(2/var(--zoom,1))]',
           )}
           onDoubleClick={() => onElementEdit(node.id)}
           onPointerDown={(event) => handlePointerDown(node, event)}

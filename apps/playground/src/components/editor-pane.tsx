@@ -124,7 +124,7 @@ export function EditorPane({ className, selectedElementId, slide }: EditorPanePr
                 } as CSSProperties
               }
             >
-              <SlideView svg={slide.svg} />
+              <SlideView svg={slide.svg} clipped={false} />
               <ElementOverlay
                 className="absolute inset-0 h-full w-full"
                 onElementEdit={setEditingElementId}
