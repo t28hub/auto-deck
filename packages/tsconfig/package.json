@@ -1,8 +1,13 @@
 {
   "name": "@auto-deck/tsconfig",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.1.0",
+  "description": "Shared TypeScript config presets for the Auto Deck monorepo",
   "license": "MIT",
+  "exports": {
+    "./base": "./base.json",
+    "./react": "./react.json"
+  },
   "dependencies": {
     "@tsconfig/strictest": "2.0.8"
   }

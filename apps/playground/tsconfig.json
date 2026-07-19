@@ -1,5 +1,5 @@
 {
-  "extends": "@auto-deck/tsconfig/react.json",
+  "extends": "@auto-deck/tsconfig/react",
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]

@@ -1,4 +1,4 @@
 {
-  "extends": "@auto-deck/tsconfig/base.json",
+  "extends": "@auto-deck/tsconfig/base",
   "include": ["src", "vitest.config.ts"]
 }
