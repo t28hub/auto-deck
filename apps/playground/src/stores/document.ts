@@ -1,4 +1,4 @@
-import { type Deck, type ElementId, type Rect, rectEquals, type SlideId } from '@auto-deck/schema';
+import { type Deck, type Element, type ElementId, type Rect, rectEquals, type SlideId } from '@auto-deck/schema';
 import { create } from 'zustand';
 
 interface DocumentState {
@@ -36,6 +36,55 @@ interface DocumentState {
    * Gives the element new bounds.
    */
   readonly moveElement: (slideId: SlideId, elementId: ElementId, bounds: Rect) => void;
+
+  /**
+   * Gives the text element new text.
+   */
+  readonly setElementText: (slideId: SlideId, elementId: ElementId, text: string) => void;
+}
+
+/**
+ * Returns the deck with one element replaced by its patched form.
+ * Returns null when the element is missing or the patch declines the update.
+ *
+ * @param deck - The deck holding the element, or null when none is loaded.
+ * @param slideId - The slide holding the element.
+ * @param elementId - The element to patch.
+ * @param patch - Maps the element to its replacement, or to undefined to decline the update.
+ * @returns The updated deck, or null when there is nothing to update.
+ */
+function patchElement(
+  deck: Deck | null,
+  slideId: SlideId,
+  elementId: ElementId,
+  patch: (element: Element) => Element | undefined,
+): Deck | null {
+  if (deck === null) {
+    return null;
+  }
+
+  const targetSlide = deck.slides.find((slide) => slide.id === slideId);
+  const targetElement = targetSlide?.elements.find((element) => element.id === elementId);
+  if (targetElement === undefined) {
+    return null;
+  }
+
+  const patched = patch(targetElement);
+  if (patched === undefined) {
+    return null;
+  }
+
+  return {
+    ...deck,
+    slides: deck.slides.map((slide) => {
+      if (slide.id !== slideId) {
+        return slide;
+      }
+
+      const elements = slide.elements.map((element) => (element.id === elementId ? patched : element));
+      return { ...slide, elements };
+    }),
+  };
 }
 
 /**
@@ -50,36 +99,22 @@ export const useDocumentStore = create<DocumentState>()((set) => ({
   selectElement: (elementId) => set({ selectedElementId: elementId }),
   moveElement: (slideId, elementId, bounds) =>
     set((state) => {
-      if (state.deck === null) {
-        return {};
-      }
-
-      const targetSlide = state.deck.slides.find((slide) => slide.id === slideId);
-      const targetElement = targetSlide?.elements.find((element) => element.id === elementId);
-      if (!targetElement) {
-        return {};
-      }
-      if (targetElement.bounds !== undefined && rectEquals(targetElement.bounds, bounds)) {
-        return {};
-      }
-
-      return {
-        deck: {
-          ...state.deck,
-          slides: state.deck.slides.map((slide) => {
-            if (slide.id !== slideId) {
-              return slide;
-            }
-
-            const elements = slide.elements.map((element) => {
-              if (element.id !== elementId) {
-                return element;
-              }
-              return { ...element, bounds };
-            });
-            return { ...slide, elements };
-          }),
-        },
-      };
+      const deck = patchElement(state.deck, slideId, elementId, (element) => {
+        if (element.bounds !== undefined && rectEquals(element.bounds, bounds)) {
+          return undefined;
+        }
+        return { ...element, bounds };
+      });
+      return deck === null ? {} : { deck };
+    }),
+  setElementText: (slideId, elementId, text) =>
+    set((state) => {
+      const deck = patchElement(state.deck, slideId, elementId, (element) => {
+        if (element.type !== 'text' || element.text === text) {
+          return undefined;
+        }
+        return { ...element, text };
+      });
+      return deck === null ? {} : { deck };
     }),
 }));

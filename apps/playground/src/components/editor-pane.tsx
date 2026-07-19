@@ -1,11 +1,13 @@
+import { TEXT_STYLE } from '@auto-deck/renderer-svg';
 import { type ElementId, toPixels } from '@auto-deck/schema';
 import { cn } from '@auto-deck/ui/lib/utils';
-import { type CSSProperties, type ReactElement, useLayoutEffect, useMemo, useRef } from 'react';
+import { type CSSProperties, type ReactElement, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CompiledSlide } from '@/compile';
 import { ControlBar } from '@/components/control-bar';
 import { ElementOverlay } from '@/components/element-overlay';
 import { SlideView } from '@/components/slide-view';
 import { useZoom } from '@/hooks/use-zoom';
+import { useDocumentStore } from '@/stores/document';
 
 /**
  * Props for the EditorPane component.
@@ -39,6 +41,15 @@ export function EditorPane({ className, selectedElementId, slide }: EditorPanePr
   const spacerRef = useRef<HTMLDivElement | null>(null);
   const previousZoomRef = useRef<number | null>(null);
 
+  const setElementText = useDocumentStore((state) => state.setElementText);
+  const [editingElementId, setEditingElementId] = useState<ElementId | null>(null);
+
+  // A stable identity keeps this mount-only, so re-renders while typing do not re-select.
+  const focusEditor = useCallback((editor: HTMLTextAreaElement | null): void => {
+    editor?.focus();
+    editor?.select();
+  }, []);
+
   const canvasWidth = slide?.scene.canvas.w;
   const canvasHeight = slide?.scene.canvas.h;
   const contentSize = useMemo(() => {
@@ -51,6 +62,9 @@ export function EditorPane({ className, selectedElementId, slide }: EditorPanePr
   const { zoom, zoomIn, zoomOut, zoomToFit, setZoom } = useZoom(scrollRef, contentSize);
 
   const ready = slide !== undefined && contentSize !== undefined && zoom !== null;
+
+  const editingNode =
+    ready && editingElementId !== null ? slide.scene.children.find((node) => node.id === editingElementId) : undefined;
 
   // When the zoom changes, we want to keep the same point in the slide centered in the scroll region.
   useLayoutEffect(() => {
@@ -99,6 +113,7 @@ export function EditorPane({ className, selectedElementId, slide }: EditorPanePr
             style={{ width: contentSize.width * zoom, height: contentSize.height * zoom }}
           >
             <div
+              data-stage=""
               className="relative origin-top-left transition-transform duration-200 ease-out"
               style={
                 {
@@ -112,9 +127,43 @@ export function EditorPane({ className, selectedElementId, slide }: EditorPanePr
               <SlideView svg={slide.svg} />
               <ElementOverlay
                 className="absolute inset-0 h-full w-full"
+                onElementEdit={setEditingElementId}
                 scene={slide.scene}
                 selectedElementId={selectedElementId}
               />
+
+              {editingNode !== undefined && (
+                <style>{`[data-stage] [data-element-id="${editingNode.id}"] text { visibility: hidden; }`}</style>
+              )}
+              {editingNode !== undefined && (
+                <textarea
+                  key={editingNode.id}
+                  className="absolute resize-none overflow-hidden border-none bg-transparent outline-none"
+                  style={{
+                    left: toPixels(editingNode.bounds.x),
+                    top: toPixels(editingNode.bounds.y),
+                    width: toPixels(editingNode.bounds.w),
+                    height: toPixels(editingNode.bounds.h),
+                    paddingLeft: TEXT_STYLE.padding,
+                    paddingTop: TEXT_STYLE.fontSize * 0.2,
+                    fontFamily: TEXT_STYLE.fontFamily,
+                    fontSize: TEXT_STYLE.fontSize,
+                    lineHeight: `${TEXT_STYLE.fontSize}px`,
+                    color: TEXT_STYLE.fill,
+                  }}
+                  value={editingNode.text}
+                  aria-label="Element text"
+                  ref={focusEditor}
+                  onChange={(event) => setElementText(slide.scene.id, editingNode.id, event.target.value)}
+                  onBlur={() => setEditingElementId(null)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === 'Escape') {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
+                />
+              )}
             </div>
           </div>
         )}

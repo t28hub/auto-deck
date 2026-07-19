@@ -3,14 +3,14 @@ import type { ReactElement } from 'react';
 import { px } from './units';
 
 /**
- * The default text size, in pixels, used until style tokens are interpreted.
+ * The text style the visitor draws with until style tokens are interpreted.
  */
-const DEFAULT_FONT_SIZE = 24;
-
-/**
- * The inset, in pixels, of text from its bounding box.
- */
-const TEXT_PADDING = 8;
+export const TEXT_STYLE = {
+  fontFamily: 'sans-serif',
+  fontSize: 24,
+  fill: '#111111',
+  padding: 8,
+} as const;
 
 /**
  * Renders each scene node to an SVG element in canvas (world) pixels.
@@ -22,14 +22,14 @@ export const svgVisitor: SceneVisitor<ReactElement> = {
     const w = px(node.bounds.w);
     const h = px(node.bounds.h);
     return (
-      <g key={node.id}>
+      <g key={node.id} data-element-id={node.id}>
         <rect x={x} y={y} width={w} height={h} fill="none" stroke="#cccccc" />
         <text
-          x={x + TEXT_PADDING}
-          y={y + DEFAULT_FONT_SIZE}
-          fontFamily="sans-serif"
-          fontSize={DEFAULT_FONT_SIZE}
-          fill="#111111"
+          x={x + TEXT_STYLE.padding}
+          y={y + TEXT_STYLE.fontSize}
+          fontFamily={TEXT_STYLE.fontFamily}
+          fontSize={TEXT_STYLE.fontSize}
+          fill={TEXT_STYLE.fill}
         >
           {node.text}
         </text>

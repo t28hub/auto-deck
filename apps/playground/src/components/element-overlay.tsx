@@ -49,6 +49,11 @@ interface ElementOverlayProps {
   readonly className?: string;
 
   /**
+   * Called with the element whose text editing was requested by a double click.
+   */
+  readonly onElementEdit: (elementId: ElementId) => void;
+
+  /**
    * The scene whose elements the overlay makes interactive.
    */
   readonly scene: Scene;
@@ -70,7 +75,12 @@ interface ElementOverlayProps {
  * @param props - The props for the ElementOverlay component.
  * @returns The overlay element.
  */
-export function ElementOverlay({ className, scene, selectedElementId }: ElementOverlayProps): ReactElement {
+export function ElementOverlay({
+  className,
+  onElementEdit,
+  scene,
+  selectedElementId,
+}: ElementOverlayProps): ReactElement {
   const selectElement = useDocumentStore((state) => state.selectElement);
   const moveElement = useDocumentStore((state) => state.moveElement);
 
@@ -135,8 +145,11 @@ export function ElementOverlay({ className, scene, selectedElementId }: ElementO
       {/* non-scaling-stroke cancels the viewBox scale but not an ancestor CSS
           scale, so the selection stroke divides by --zoom to stay two pixels. */}
       {scene.children.map((node) => (
+        // biome-ignore lint/a11y/useSemanticElements: an SVG hit area cannot be a native button.
         <rect
           key={node.id}
+          role="button"
+          aria-label={`Element ${node.text}`}
           data-element-id={node.id}
           x={node.bounds.x}
           y={node.bounds.y}
@@ -147,6 +160,7 @@ export function ElementOverlay({ className, scene, selectedElementId }: ElementO
             'cursor-move fill-transparent',
             node.id === selectedElementId && 'stroke-ring [stroke-width:calc(2/var(--zoom,1))]',
           )}
+          onDoubleClick={() => onElementEdit(node.id)}
           onPointerDown={(event) => handlePointerDown(node, event)}
           onPointerMove={handlePointerMove}
           onPointerUp={endDrag}
