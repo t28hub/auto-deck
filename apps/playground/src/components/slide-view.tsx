@@ -1,5 +1,5 @@
+import { cn } from '@auto-deck/ui/lib/utils';
 import type { ReactElement } from 'react';
-import { cn } from '@/lib/utils';
 
 /**
  * Props for the SlideView component.

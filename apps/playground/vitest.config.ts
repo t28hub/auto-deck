@@ -6,6 +6,8 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: 'happy-dom',
+      // Node's built-in experimental localStorage would shadow happy-dom's,
+      // breaking storage tests; disable it.
       execArgv: ['--no-experimental-webstorage'],
       coverage: {
         provider: 'v8',

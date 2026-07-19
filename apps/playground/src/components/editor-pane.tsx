@@ -1,11 +1,11 @@
 import { type ElementId, toPixels } from '@auto-deck/schema';
+import { cn } from '@auto-deck/ui/lib/utils';
 import { type CSSProperties, type ReactElement, useLayoutEffect, useMemo, useRef } from 'react';
 import type { CompiledSlide } from '@/compile';
 import { ControlBar } from '@/components/control-bar';
 import { ElementOverlay } from '@/components/element-overlay';
 import { SlideView } from '@/components/slide-view';
 import { useZoom } from '@/hooks/use-zoom';
-import { cn } from '@/lib/utils';
 
 /**
  * Props for the EditorPane component.

@@ -1,7 +1,7 @@
 import type { Scene, SceneNode } from '@auto-deck/renderer';
 import { type ElementId, emu, type Rect, rect } from '@auto-deck/schema';
+import { cn } from '@auto-deck/ui/lib/utils';
 import { type PointerEvent, type ReactElement, useRef } from 'react';
-import { cn } from '@/lib/utils';
 import { useDocumentStore } from '@/stores/document';
 
 /**

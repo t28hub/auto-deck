@@ -1,8 +1,8 @@
+import { Button } from '@auto-deck/ui/components/button';
+import { useTheme } from '@auto-deck/ui/components/theme-provider';
+import { cn } from '@auto-deck/ui/lib/utils';
 import { Moon, PanelLeft, Sun } from 'lucide-react';
 import type { ReactElement } from 'react';
-import { useTheme } from '@/components/theme-provider';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
 /**
  * Props for the Toolbar component.

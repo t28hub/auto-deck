@@ -2,6 +2,10 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+/* This package lives outside the consuming app's root, so automatic source
+   detection misses it; scan it explicitly. */
+@source "../";
+
 /* Tailwind's default dark variant follows the OS media query; rebind it to
    the .dark class so the ThemeProvider owns which theme is in effect. */
 @custom-variant dark (&:is(.dark *));

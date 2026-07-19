@@ -1,9 +1,9 @@
 import type { Deck, SlideId } from '@auto-deck/schema';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@auto-deck/ui/components/tabs';
+import { cn } from '@auto-deck/ui/lib/utils';
 import { type ReactElement, useMemo } from 'react';
 import type { CompiledSlide } from '@/compile';
 import { SlideView } from '@/components/slide-view';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
 import { useDocumentStore } from '@/stores/document';
 
 /**

@@ -1,11 +1,11 @@
 import type { Deck } from '@auto-deck/schema';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@auto-deck/ui/components/resizable';
 import { type ReactElement, useEffect, useMemo, useState } from 'react';
 import { usePanelRef } from 'react-resizable-panels';
 import { EditorPane } from '@/components/editor-pane';
 import { InspectorPane } from '@/components/inspector-pane';
 import { NavigatorPane } from '@/components/navigator-pane';
 import { Toolbar } from '@/components/toolbar';
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { deckRepository, INITIAL_DECK_ID } from '@/repository';
 import { compile } from './compile';
 import { useDocumentStore } from './stores/document';

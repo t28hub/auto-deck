@@ -1,8 +1,8 @@
+import { Button } from '@auto-deck/ui/components/button';
+import { Input } from '@auto-deck/ui/components/input';
+import { cn } from '@auto-deck/ui/lib/utils';
 import { Maximize, Minus, Plus } from 'lucide-react';
 import { memo, type ReactElement } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
 
 /**
  * Props for the ControlBar component.

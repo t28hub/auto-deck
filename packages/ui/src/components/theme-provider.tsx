@@ -1,5 +1,13 @@
-import { createContext, type ReactElement, type ReactNode, useContext, useEffect, useMemo, useState } from 'react';
-import { useLocalStorage } from '@/hooks/use-local-storage';
+import { useLocalStorage } from '@auto-deck/ui/hooks/use-local-storage';
+import {
+  createContext,
+  type ReactElement,
+  type ReactNode,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useSyncExternalStore,
+} from 'react';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -68,6 +76,30 @@ const THEME_STORAGE_OPTIONS = {
 const DARK_QUERY = '(prefers-color-scheme: dark)';
 
 /**
+ * Subscribes to changes of the OS dark theme preference.
+ *
+ * @param onChange - Called when the preference changes.
+ * @returns A function that unsubscribes.
+ */
+function subscribeToSystemDark(onChange: () => void): () => void {
+  const mediaQuery = window.matchMedia(DARK_QUERY);
+  mediaQuery.addEventListener('change', onChange);
+
+  return () => {
+    mediaQuery.removeEventListener('change', onChange);
+  };
+}
+
+/**
+ * Reads whether the OS currently prefers a dark theme.
+ *
+ * @returns True when the OS prefers a dark theme.
+ */
+function readSystemDark(): boolean {
+  return window.matchMedia(DARK_QUERY).matches;
+}
+
+/**
  * Provides the theme context to its subtree, persisting the preference in
  * localStorage and applying it to the document root.
  *
@@ -76,23 +108,13 @@ const DARK_QUERY = '(prefers-color-scheme: dark)';
  */
 export function ThemeProvider({ children, storageKey, defaultTheme = 'system' }: ThemeProviderProps): ReactElement {
   const { value: theme, setValue: setTheme } = useLocalStorage<Theme>(storageKey, defaultTheme, THEME_STORAGE_OPTIONS);
-  const [systemDark, setSystemDark] = useState(() => window.matchMedia(DARK_QUERY).matches);
+  const systemDark = useSyncExternalStore(subscribeToSystemDark, readSystemDark);
   const resolvedTheme = theme === 'system' ? (systemDark ? 'dark' : 'light') : theme;
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(DARK_QUERY);
-    function handleChange(event: MediaQueryListEvent): void {
-      setSystemDark(event.matches);
-    }
-
-    mediaQuery.addEventListener('change', handleChange);
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
-  }, []);
-
-  useEffect(() => {
+  // The literal class name binds to globals.css: the dark custom variant and
+  // the .dark token block both key off it on the root element. Applied before
+  // paint so a dark load does not flash light first.
+  useLayoutEffect(() => {
     document.documentElement.classList.toggle('dark', resolvedTheme === 'dark');
   }, [resolvedTheme]);
 

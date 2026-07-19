@@ -1,6 +1,6 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@auto-deck/ui/components/tabs';
+import { cn } from '@auto-deck/ui/lib/utils';
 import type { ReactElement } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
 
 /**
  * Props for the InspectorPane component.
