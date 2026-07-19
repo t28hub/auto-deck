@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm with the version pinned by packageManager
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js with the version declared in package.json
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Install dependencies with a frozen lockfile
+        run: pnpm install --frozen-lockfile
+        env:
+          LEFTHOOK: "0"
+
+      - name: Lint all files with Biome
+        run: pnpm lint
+
+      - name: Typecheck, test, and build all workspaces with Turborepo
+        run: pnpm exec turbo typecheck test build
