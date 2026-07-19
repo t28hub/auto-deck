@@ -22,7 +22,8 @@ cd auto-deck
 
 This project is a [pnpm](https://pnpm.io/) workspace and requires the Node.js version declared in the `engines` field of `package.json`.  
 The pnpm version is pinned by the `packageManager` field in `package.json`.  
-Installing also sets up the git hooks via [lefthook](https://github.com/evilmartians/lefthook).
+Installing also sets up the git hooks via [lefthook](https://github.com/evilmartians/lefthook).  
+The pre-commit hook also requires [gitleaks](https://github.com/gitleaks/gitleaks) (e.g. `brew install gitleaks`) to scan staged changes for secrets.
 
 ```sh
 pnpm install
