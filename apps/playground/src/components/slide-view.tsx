@@ -11,6 +11,13 @@ interface SlideViewProps {
   readonly className?: string;
 
   /**
+   * Whether content outside the slide bounds is clipped, as in exports, where
+   * the clip lives in the SVG viewport itself. The editor disables this so
+   * elements dragged off the slide stay visible on the surrounding canvas.
+   */
+  readonly clipped?: boolean;
+
+  /**
    * The slide's SVG document string.
    */
   readonly svg: string;
@@ -23,10 +30,14 @@ interface SlideViewProps {
  * @param props - The props for the SlideView component.
  * @returns The element hosting the slide.
  */
-export function SlideView({ className, svg }: SlideViewProps): ReactElement {
+export function SlideView({ className, clipped = true, svg }: SlideViewProps): ReactElement {
   return (
     <div
-      className={cn('bg-white [&>svg]:block [&>svg]:h-auto [&>svg]:w-full', className)}
+      className={cn(
+        'bg-white [&>svg]:block [&>svg]:h-auto [&>svg]:w-full',
+        !clipped && '[&>svg]:overflow-visible',
+        className,
+      )}
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );
