@@ -35,7 +35,7 @@ interface DocumentState {
   /**
    * Gives the element new bounds.
    */
-  readonly moveElement: (slideId: SlideId, elementId: ElementId, bounds: Rect) => void;
+  readonly setElementBounds: (slideId: SlideId, elementId: ElementId, bounds: Rect) => void;
 
   /**
    * Gives the text element new text.
@@ -97,7 +97,7 @@ export const useDocumentStore = create<DocumentState>()((set) => ({
   hydrate: (deck) => set({ deck, selectedSlideId: null, selectedElementId: null }),
   selectSlide: (slideId) => set({ selectedSlideId: slideId, selectedElementId: null }),
   selectElement: (elementId) => set({ selectedElementId: elementId }),
-  moveElement: (slideId, elementId, bounds) =>
+  setElementBounds: (slideId, elementId, bounds) =>
     set((state) => {
       const deck = patchElement(state.deck, slideId, elementId, (element) => {
         if (element.bounds !== undefined && rectEquals(element.bounds, bounds)) {

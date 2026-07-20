@@ -84,7 +84,7 @@ export function ElementOverlay({
   selectedElementId,
 }: ElementOverlayProps): ReactElement {
   const selectElement = useDocumentStore((state) => state.selectElement);
-  const moveElement = useDocumentStore((state) => state.moveElement);
+  const setElementBounds = useDocumentStore((state) => state.setElementBounds);
 
   const dragRef = useRef<DragState | null>(null);
 
@@ -121,7 +121,7 @@ export function ElementOverlay({
 
     // Committing on every move keeps the deck the single source of truth, so
     // the slide, the thumbnails, and the JSON view all follow the drag live.
-    moveElement(
+    setElementBounds(
       scene.id,
       drag.elementId,
       rect(
