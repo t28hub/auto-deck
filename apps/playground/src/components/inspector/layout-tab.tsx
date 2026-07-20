@@ -1,4 +1,4 @@
-import type { Scene } from '@auto-deck/renderer';
+import { nodeById, type Scene } from '@auto-deck/renderer';
 import { type ElementId, pixels, type Rect, rect, toPixels } from '@auto-deck/schema';
 import { FieldGroup, FieldLegend, FieldSet } from '@auto-deck/ui/components/field';
 import { cn } from '@auto-deck/ui/lib/utils';
@@ -35,7 +35,7 @@ interface LayoutTabProps {
 export function LayoutTab({ className, scene, selectedElementId }: LayoutTabProps): ReactElement {
   const setElementBounds = useDocumentStore((state) => state.setElementBounds);
 
-  const node = scene?.children.find((child) => child.id === selectedElementId);
+  const node = scene === undefined ? undefined : nodeById(scene, selectedElementId);
   if (scene === undefined || node === undefined) {
     return <p className={cn('text-muted-foreground', className)}>Select an element to edit its layout.</p>;
   }

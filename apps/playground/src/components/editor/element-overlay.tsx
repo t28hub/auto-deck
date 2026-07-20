@@ -1,4 +1,4 @@
-import type { Scene, SceneNode } from '@auto-deck/renderer';
+import { nodeById, type Scene, type SceneNode } from '@auto-deck/renderer';
 import { type ElementId, emu, type Rect, rect, toPixels } from '@auto-deck/schema';
 import { cn } from '@auto-deck/ui/lib/utils';
 import { type PointerEvent, type ReactElement, useRef } from 'react';
@@ -137,7 +137,7 @@ export function ElementOverlay({
     dragRef.current = null;
   }
 
-  const selectedNode = scene.children.find((node) => node.id === selectedElementId);
+  const selectedNode = nodeById(scene, selectedElementId);
 
   return (
     <svg

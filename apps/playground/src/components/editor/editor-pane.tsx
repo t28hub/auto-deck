@@ -1,3 +1,4 @@
+import { nodeById } from '@auto-deck/renderer';
 import { TEXT_STYLE } from '@auto-deck/renderer-svg';
 import { type ElementId, toPixels } from '@auto-deck/schema';
 import { cn } from '@auto-deck/ui/lib/utils';
@@ -63,8 +64,7 @@ export function EditorPane({ className, selectedElementId, slide }: EditorPanePr
 
   const ready = slide !== undefined && contentSize !== undefined && zoom !== null;
 
-  const editingNode =
-    ready && editingElementId !== null ? slide.scene.children.find((node) => node.id === editingElementId) : undefined;
+  const editingNode = ready ? nodeById(slide.scene, editingElementId) : undefined;
 
   // When the zoom changes, we want to keep the same point in the slide centered in the scroll region.
   useLayoutEffect(() => {
