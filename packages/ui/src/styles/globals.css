@@ -26,6 +26,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+  --color-selection: var(--selection);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -72,6 +73,10 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+  /* Editor selection chrome sits on the slide, which is always white paper
+     (renderer paints #ffffff; SlideView is bg-white), so it is theme-independent:
+     defined once here and deliberately not overridden in .dark. */
+  --selection: oklch(0.62 0.19 255);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);

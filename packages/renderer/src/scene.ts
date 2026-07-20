@@ -51,3 +51,37 @@ export interface Scene {
    */
   readonly children: readonly SceneNode[];
 }
+
+/**
+ * Finds the node built from the given element anywhere in the scene tree.
+ *
+ * @param scene - The scene to search.
+ * @param id - The element id to match, or null when nothing is selected.
+ * @returns The matching node, or undefined when the id is null or no node matches.
+ */
+export function nodeById(scene: Scene, id: ElementId | null | undefined): SceneNode | undefined {
+  if (id === null || id === undefined) {
+    return undefined;
+  }
+  return findNode(scene.children, id);
+}
+
+/**
+ * Depth-first searches the nodes and their descendants for the given id.
+ *
+ * @param nodes - The nodes to search.
+ * @param id - The element id to match.
+ * @returns The matching node, or undefined when no node matches.
+ */
+function findNode(nodes: readonly SceneNode[], id: ElementId): SceneNode | undefined {
+  for (const node of nodes) {
+    if (node.id === id) {
+      return node;
+    }
+    const found = findNode(node.children, id);
+    if (found !== undefined) {
+      return found;
+    }
+  }
+  return undefined;
+}

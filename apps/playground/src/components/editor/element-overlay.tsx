@@ -1,4 +1,4 @@
-import type { Scene, SceneNode } from '@auto-deck/renderer';
+import { nodeById, type Scene, type SceneNode } from '@auto-deck/renderer';
 import { type ElementId, emu, type Rect, rect, toPixels } from '@auto-deck/schema';
 import { cn } from '@auto-deck/ui/lib/utils';
 import { type PointerEvent, type ReactElement, useRef } from 'react';
@@ -137,6 +137,8 @@ export function ElementOverlay({
     dragRef.current = null;
   }
 
+  const selectedNode = nodeById(scene, selectedElementId);
+
   return (
     <svg
       className={cn('touch-none overflow-visible', className)}
@@ -144,8 +146,6 @@ export function ElementOverlay({
       aria-label="Slide elements"
       onPointerDown={() => selectElement(null)}
     >
-      {/* non-scaling-stroke cancels the viewBox scale but not an ancestor CSS
-          scale, so the selection stroke divides by --zoom to stay two pixels. */}
       {scene.children.map((node) => (
         // biome-ignore lint/a11y/useSemanticElements: an SVG hit area cannot be a native button.
         <rect
@@ -157,11 +157,7 @@ export function ElementOverlay({
           y={toPixels(node.bounds.y)}
           width={toPixels(node.bounds.w)}
           height={toPixels(node.bounds.h)}
-          vectorEffect="non-scaling-stroke"
-          className={cn(
-            'cursor-move fill-transparent',
-            node.id === selectedElementId && 'stroke-ring stroke-[calc(2/var(--zoom,1))]',
-          )}
+          className="cursor-move fill-transparent hover:stroke-1 hover:stroke-selection/50"
           onDoubleClick={() => onElementEdit(node.id)}
           onPointerDown={(event) => handlePointerDown(node, event)}
           onPointerMove={handlePointerMove}
@@ -169,6 +165,17 @@ export function ElementOverlay({
           onPointerCancel={endDrag}
         />
       ))}
+
+      {selectedNode !== undefined && (
+        <rect
+          aria-hidden
+          x={toPixels(selectedNode.bounds.x)}
+          y={toPixels(selectedNode.bounds.y)}
+          width={toPixels(selectedNode.bounds.w)}
+          height={toPixels(selectedNode.bounds.h)}
+          className="pointer-events-none fill-none stroke-1 stroke-selection"
+        />
+      )}
     </svg>
   );
 }
