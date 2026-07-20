@@ -61,18 +61,16 @@ describe('svgRenderer', () => {
     expect(parsed.getAttribute('height')).toBe('360');
   });
 
-  it('should draw element bounds in canvas pixels', () => {
+  it('should place text in canvas pixels', () => {
     // Act
     const scene = createScene('Hello');
     const actual = svgRenderer.render(scene);
 
     // Assert
-    const bounds = parseSvg(actual).querySelector('g > rect');
-    assert(bounds !== null, 'Expected the text element to draw its bounding rect');
-    expect(bounds.getAttribute('x')).toBe('0');
-    expect(bounds.getAttribute('y')).toBe('0');
-    expect(bounds.getAttribute('width')).toBe('1280');
-    expect(bounds.getAttribute('height')).toBe('144');
+    const text = parseSvg(actual).querySelector('g > text');
+    assert(text !== null, 'Expected the text element to draw its text');
+    expect(text.getAttribute('x')).toBe('8');
+    expect(text.getAttribute('y')).toBe('24');
   });
 
   it('should escape markup in text content', () => {

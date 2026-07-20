@@ -19,11 +19,8 @@ export const svgVisitor: SceneVisitor<ReactElement> = {
   text(node) {
     const x = px(node.bounds.x);
     const y = px(node.bounds.y);
-    const w = px(node.bounds.w);
-    const h = px(node.bounds.h);
     return (
       <g key={node.id} data-element-id={node.id}>
-        <rect x={x} y={y} width={w} height={h} fill="none" stroke="#cccccc" />
         <text
           x={x + TEXT_STYLE.padding}
           y={y + TEXT_STYLE.fontSize}
