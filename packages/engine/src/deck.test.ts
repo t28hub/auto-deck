@@ -1,4 +1,4 @@
-import { type Deck, deckSchema, pixels, WIDESCREEN_16_9 } from '@auto-deck/schema';
+import { type Deck, deckSchema, Emu, WIDESCREEN_16_9 } from '@auto-deck/schema';
 import { assert, describe, expect, it } from 'vitest';
 import { resolveDeck } from './deck';
 
@@ -45,10 +45,10 @@ describe('resolveDeck', () => {
     expect(actual.value.slides).toHaveLength(1);
     expect(actual.value).not.toHaveProperty('layouts');
     expect(actual.value.slides[0]?.elements[0]?.bounds).toEqual({
-      x: pixels(0),
-      y: pixels(0),
-      w: pixels(1280),
-      h: pixels(144),
+      x: Emu.fromPixels(0),
+      y: Emu.fromPixels(0),
+      w: Emu.fromPixels(1280),
+      h: Emu.fromPixels(144),
     });
   });
 
@@ -57,15 +57,15 @@ describe('resolveDeck', () => {
     const deck = makeDeck([SLIDE]);
 
     // Act
-    const actual = resolveDeck(deck, { margin: pixels(10) });
+    const actual = resolveDeck(deck, { margin: Emu.fromPixels(10) });
 
     // Assert
     assert(actual.success, 'Expected deck resolution to succeed');
     expect(actual.value.slides[0]?.elements[0]?.bounds).toEqual({
-      x: pixels(10),
-      y: pixels(10),
-      w: pixels(1260),
-      h: pixels(140),
+      x: Emu.fromPixels(10),
+      y: Emu.fromPixels(10),
+      w: Emu.fromPixels(1260),
+      h: Emu.fromPixels(140),
     });
   });
 
@@ -130,7 +130,7 @@ describe('resolveDeck', () => {
     const deck = makeDeck([SLIDE]);
 
     // Act
-    const actual = resolveDeck(deck, { margin: pixels(400) });
+    const actual = resolveDeck(deck, { margin: Emu.fromPixels(400) });
 
     // Assert
     assert(!actual.success, 'Expected deck resolution to fail due to an oversized margin');

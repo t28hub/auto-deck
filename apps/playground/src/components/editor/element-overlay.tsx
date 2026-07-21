@@ -1,5 +1,5 @@
 import { nodeById, type Scene, type SceneNode } from '@auto-deck/renderer';
-import { type ElementId, emu, type Rect, rect, toPixels } from '@auto-deck/schema';
+import { type ElementId, Emu, type Rect, rect } from '@auto-deck/schema';
 import { cn } from '@auto-deck/ui/lib/utils';
 import { type PointerEvent, type ReactElement, useRef } from 'react';
 import { useDocumentStore } from '@/stores/document';
@@ -125,8 +125,8 @@ export function ElementOverlay({
       scene.id,
       drag.elementId,
       rect(
-        emu(Math.round(drag.origin.x + dxPx * drag.emuPerClientPx)),
-        emu(Math.round(drag.origin.y + dyPx * drag.emuPerClientPx)),
+        Emu.of(Math.round(drag.origin.x + dxPx * drag.emuPerClientPx)),
+        Emu.of(Math.round(drag.origin.y + dyPx * drag.emuPerClientPx)),
         drag.origin.w,
         drag.origin.h,
       ),
@@ -142,7 +142,7 @@ export function ElementOverlay({
   return (
     <svg
       className={cn('touch-none overflow-visible', className)}
-      viewBox={`0 0 ${toPixels(scene.canvas.w)} ${toPixels(scene.canvas.h)}`}
+      viewBox={`0 0 ${Emu.toPixels(scene.canvas.w)} ${Emu.toPixels(scene.canvas.h)}`}
       aria-label="Slide elements"
       onPointerDown={() => selectElement(null)}
     >
@@ -153,10 +153,10 @@ export function ElementOverlay({
           role="button"
           aria-label={`Element ${node.text}`}
           data-element-id={node.id}
-          x={toPixels(node.bounds.x)}
-          y={toPixels(node.bounds.y)}
-          width={toPixels(node.bounds.w)}
-          height={toPixels(node.bounds.h)}
+          x={Emu.toPixels(node.bounds.x)}
+          y={Emu.toPixels(node.bounds.y)}
+          width={Emu.toPixels(node.bounds.w)}
+          height={Emu.toPixels(node.bounds.h)}
           className="cursor-move fill-transparent hover:stroke-1 hover:stroke-selection/50"
           onDoubleClick={() => onElementEdit(node.id)}
           onPointerDown={(event) => handlePointerDown(node, event)}
@@ -169,10 +169,10 @@ export function ElementOverlay({
       {selectedNode !== undefined && (
         <rect
           aria-hidden
-          x={toPixels(selectedNode.bounds.x)}
-          y={toPixels(selectedNode.bounds.y)}
-          width={toPixels(selectedNode.bounds.w)}
-          height={toPixels(selectedNode.bounds.h)}
+          x={Emu.toPixels(selectedNode.bounds.x)}
+          y={Emu.toPixels(selectedNode.bounds.y)}
+          width={Emu.toPixels(selectedNode.bounds.w)}
+          height={Emu.toPixels(selectedNode.bounds.h)}
           className="pointer-events-none fill-none stroke-1 stroke-selection"
         />
       )}

@@ -1,5 +1,5 @@
 import type { Scene } from '@auto-deck/renderer';
-import { elementIdSchema, pixels, rect, slideIdSchema, WIDESCREEN_16_9 } from '@auto-deck/schema';
+import { Emu, elementIdSchema, rect, slideIdSchema, WIDESCREEN_16_9 } from '@auto-deck/schema';
 import { assert, describe, expect, it } from 'vitest';
 import { parseSvg } from '../test/parse-svg';
 import { svgRenderer } from './renderer';
@@ -15,7 +15,7 @@ function createScene(text: string): Scene {
       {
         kind: 'text',
         id: elementIdSchema.parse('el_000000000001'),
-        bounds: rect(pixels(0), pixels(0), pixels(1280), pixels(144)),
+        bounds: rect(Emu.fromPixels(0), Emu.fromPixels(0), Emu.fromPixels(1280), Emu.fromPixels(144)),
         text,
         children: [],
       },

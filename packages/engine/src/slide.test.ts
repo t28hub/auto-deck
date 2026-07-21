@@ -1,8 +1,8 @@
-import { type Layout, layoutSchema, pixels, rect, type Slide, slideSchema } from '@auto-deck/schema';
+import { Emu, type Layout, layoutSchema, rect, type Slide, slideSchema } from '@auto-deck/schema';
 import { assert, describe, expect, it } from 'vitest';
 import { resolveSlide } from './slide';
 
-const AREA = rect(pixels(0), pixels(0), pixels(1280), pixels(720));
+const AREA = rect(Emu.fromPixels(0), Emu.fromPixels(0), Emu.fromPixels(1280), Emu.fromPixels(720));
 
 const TITLE_SLOT = {
   id: 'slot-title',
@@ -17,7 +17,7 @@ const FLOW_SLOT = {
   flow: { gap: { ratio: 0.02 } },
 };
 
-const AUTHORED_BOUNDS = rect(pixels(10), pixels(20), pixels(30), pixels(40));
+const AUTHORED_BOUNDS = rect(Emu.fromPixels(10), Emu.fromPixels(20), Emu.fromPixels(30), Emu.fromPixels(40));
 
 /**
  * Creates a valid fixture layout in wire format.
@@ -46,10 +46,10 @@ describe('resolveSlide', () => {
     assert(actual.success, 'Expected slide resolution to succeed');
     expect(actual.value.elements).toHaveLength(1);
     expect(actual.value.elements[0]?.bounds).toEqual({
-      x: pixels(0),
-      y: pixels(0),
-      w: pixels(1280),
-      h: pixels(144),
+      x: Emu.fromPixels(0),
+      y: Emu.fromPixels(0),
+      w: Emu.fromPixels(1280),
+      h: Emu.fromPixels(144),
     });
   });
 
@@ -68,9 +68,9 @@ describe('resolveSlide', () => {
     // Assert
     assert(actual.success, 'Expected slide resolution to succeed');
     const bounds = actual.value.elements.map((element) => element.bounds);
-    expect(bounds.map((b) => b.x)).toEqual([pixels(0), pixels(435.2), pixels(870.4)]);
+    expect(bounds.map((b) => b.x)).toEqual([Emu.fromPixels(0), Emu.fromPixels(435.2), Emu.fromPixels(870.4)]);
     for (const b of bounds) {
-      expect(b).toMatchObject({ y: pixels(201.6), w: pixels(409.6), h: pixels(432) });
+      expect(b).toMatchObject({ y: Emu.fromPixels(201.6), w: Emu.fromPixels(409.6), h: Emu.fromPixels(432) });
     }
   });
 
@@ -153,8 +153,8 @@ describe('resolveSlide', () => {
     assert(actual.success, 'Expected slide resolution to succeed');
     const [a, b, c] = actual.value.elements.map((element) => element.bounds);
     // The siblings keep the three-cell distribution as if B never moved.
-    expect(a?.x).toEqual(pixels(0));
-    expect(c?.x).toEqual(pixels(870.4));
+    expect(a?.x).toEqual(Emu.fromPixels(0));
+    expect(c?.x).toEqual(Emu.fromPixels(870.4));
     expect(b).toEqual(AUTHORED_BOUNDS);
   });
 

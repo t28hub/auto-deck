@@ -1,5 +1,5 @@
 import { nodeById, type Scene } from '@auto-deck/renderer';
-import { type ElementId, pixels, type Rect, rect, toPixels } from '@auto-deck/schema';
+import { type ElementId, Emu, type Rect, rect } from '@auto-deck/schema';
 import { FieldGroup, FieldLegend, FieldSet } from '@auto-deck/ui/components/field';
 import { cn } from '@auto-deck/ui/lib/utils';
 import type { ReactElement } from 'react';
@@ -64,17 +64,18 @@ export function LayoutTab({ className, scene, selectedElementId }: LayoutTabProp
           <NumberField
             key={`${node.id}-x`}
             label="X"
-            value={Math.round(toPixels(node.bounds.x))}
-            onCommit={(x) => commit({ x: pixels(x) })}
+            value={Math.round(Emu.toPixels(node.bounds.x))}
+            onCommit={(x) => commit({ x: Emu.fromPixels(x) })}
           />
           <NumberField
             key={`${node.id}-y`}
             label="Y"
-            value={Math.round(toPixels(node.bounds.y))}
-            onCommit={(y) => commit({ y: pixels(y) })}
+            value={Math.round(Emu.toPixels(node.bounds.y))}
+            onCommit={(y) => commit({ y: Emu.fromPixels(y) })}
           />
         </FieldGroup>
       </FieldSet>
+
       <FieldSet>
         <FieldLegend variant="label">Size</FieldLegend>
         <FieldGroup className="grid grid-cols-2 gap-2">
@@ -82,15 +83,15 @@ export function LayoutTab({ className, scene, selectedElementId }: LayoutTabProp
             key={`${node.id}-w`}
             label="W"
             min={1}
-            value={Math.round(toPixels(node.bounds.w))}
-            onCommit={(w) => commit({ w: pixels(w) })}
+            value={Math.round(Emu.toPixels(node.bounds.w))}
+            onCommit={(w) => commit({ w: Emu.fromPixels(w) })}
           />
           <NumberField
             key={`${node.id}-h`}
             label="H"
             min={1}
-            value={Math.round(toPixels(node.bounds.h))}
-            onCommit={(h) => commit({ h: pixels(h) })}
+            value={Math.round(Emu.toPixels(node.bounds.h))}
+            onCommit={(h) => commit({ h: Emu.fromPixels(h) })}
           />
         </FieldGroup>
       </FieldSet>

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { type Emu, positiveEmu, positiveEmuSchema } from '../units';
+import { Emu, positiveEmuSchema } from '../units';
 
 /**
  * Schema for a 2D size in EMU.
@@ -33,5 +33,5 @@ export type Size = z.infer<typeof sizeSchema>;
  * @throws {RangeError} If width or height is not positive.
  */
 export function size(w: Emu, h: Emu): Size {
-  return { w: positiveEmu(w), h: positiveEmu(h) };
+  return { w: Emu.ofPositive(w), h: Emu.ofPositive(h) };
 }

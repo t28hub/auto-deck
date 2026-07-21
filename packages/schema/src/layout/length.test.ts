@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { emu } from '../units';
+import { Emu } from '../units';
 import { fixed, lengthSchema, relative } from './length';
 
 describe('lengthSchema', () => {
@@ -28,7 +28,7 @@ describe('lengthSchema', () => {
 describe('fixed', () => {
   it('should create a fixed length', () => {
     // Act
-    const actual = fixed(emu(9525));
+    const actual = fixed(Emu.of(9525));
 
     // Assert
     expect(actual).toEqual({ emu: 9525 });
@@ -46,7 +46,7 @@ describe('relative', () => {
 
   it('should create a relative length with a fixed offset', () => {
     // Act
-    const actual = relative(0.5, emu(9525));
+    const actual = relative(0.5, Emu.of(9525));
 
     // Assert
     expect(actual).toEqual({ ratio: 0.5, offset: 9525 });

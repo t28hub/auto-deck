@@ -1,5 +1,4 @@
-import type { Emu, Length } from '@auto-deck/schema';
-import { emu } from '@auto-deck/schema';
+import { Emu, type Length } from '@auto-deck/schema';
 
 /**
  * Resolves a layout {@link Length} to an absolute length in EMU.
@@ -14,5 +13,5 @@ export function resolveLength(length: Length, extent: Emu): Emu {
   if ('emu' in length) {
     return length.emu;
   }
-  return emu(Math.round(length.ratio * extent + (length.offset ?? 0)));
+  return Emu.of(Math.round(length.ratio * extent + (length.offset ?? 0)));
 }

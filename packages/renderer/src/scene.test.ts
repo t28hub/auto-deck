@@ -1,4 +1,4 @@
-import { elementId, pixels, rect, slideId, WIDESCREEN_16_9 } from '@auto-deck/schema';
+import { Emu, elementId, rect, slideId, WIDESCREEN_16_9 } from '@auto-deck/schema';
 import { describe, expect, it } from 'vitest';
 import { nodeById, type Scene, type SceneNode } from './scene';
 
@@ -9,7 +9,7 @@ function textNode(children: readonly SceneNode[] = []): SceneNode {
   return {
     kind: 'text',
     id: elementId(),
-    bounds: rect(pixels(0), pixels(0), pixels(10), pixels(10)),
+    bounds: rect(Emu.fromPixels(0), Emu.fromPixels(0), Emu.fromPixels(10), Emu.fromPixels(10)),
     text: 'node',
     children,
   };
