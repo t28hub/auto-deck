@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import { type Emu, positiveEmu } from '../units';
+import { Emu } from '../units';
 import { pointSchema } from './point';
 import { sizeSchema } from './size';
 
@@ -27,7 +27,7 @@ export type Rect = z.infer<typeof rectSchema>;
  * @throws {RangeError} If width or height is not positive.
  */
 export function rect(x: Emu, y: Emu, w: Emu, h: Emu): Rect {
-  return { x, y, w: positiveEmu(w), h: positiveEmu(h) };
+  return { x, y, w: Emu.ofPositive(w), h: Emu.ofPositive(h) };
 }
 
 /**

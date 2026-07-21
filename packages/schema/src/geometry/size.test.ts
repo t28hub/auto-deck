@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { emu } from '../units';
+import { Emu } from '../units';
 import { size, sizeSchema } from './size';
 
 describe('sizeSchema', () => {
@@ -29,7 +29,7 @@ describe('sizeSchema', () => {
 describe('size', () => {
   it('should create a size from branded dimensions', () => {
     // Act
-    const actual = size(emu(9525), emu(19_050));
+    const actual = size(Emu.of(9525), Emu.of(19_050));
 
     // Assert
     expect(actual).toEqual({ w: 9525, h: 19_050 });
@@ -37,6 +37,6 @@ describe('size', () => {
 
   it('should reject a non-positive dimension', () => {
     // Act & Assert
-    expect(() => size(emu(9525), emu(0))).toThrow(RangeError);
+    expect(() => size(Emu.of(9525), Emu.of(0))).toThrow(RangeError);
   });
 });

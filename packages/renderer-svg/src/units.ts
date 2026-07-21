@@ -1,4 +1,4 @@
-import { type Emu, toPixels } from '@auto-deck/schema';
+import { Emu } from '@auto-deck/schema';
 
 /**
  * Converts EMU to pixels, rounded to two decimals.
@@ -7,5 +7,5 @@ import { type Emu, toPixels } from '@auto-deck/schema';
  * @returns The length in pixels.
  */
 export function px(value: Emu): number {
-  return Math.round(toPixels(value) * 100) / 100;
+  return Math.round(Emu.toPixels(value) * 100) / 100;
 }

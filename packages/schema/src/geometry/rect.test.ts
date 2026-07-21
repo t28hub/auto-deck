@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { emu } from '../units';
+import { Emu } from '../units';
 import { rect, rectEquals, rectSchema } from './rect';
 
 describe('rectSchema', () => {
@@ -24,7 +24,7 @@ describe('rectSchema', () => {
 describe('rect', () => {
   it('should create a rectangle from branded coordinates and dimensions', () => {
     // Act
-    const actual = rect(emu(0), emu(9525), emu(9525), emu(19_050));
+    const actual = rect(Emu.of(0), Emu.of(9525), Emu.of(9525), Emu.of(19_050));
 
     // Assert
     expect(actual).toEqual({ x: 0, y: 9525, w: 9525, h: 19_050 });
@@ -32,14 +32,14 @@ describe('rect', () => {
 
   it('should reject a non-positive dimension', () => {
     // Act & Assert
-    expect(() => rect(emu(0), emu(0), emu(9525), emu(0))).toThrow(RangeError);
+    expect(() => rect(Emu.of(0), Emu.of(0), Emu.of(9525), Emu.of(0))).toThrow(RangeError);
   });
 });
 
 describe('rectEquals', () => {
   it('should return true when comparing a rectangle to itself', () => {
     // Arrange
-    const base = rect(emu(0), emu(9525), emu(9525), emu(19_050));
+    const base = rect(Emu.of(0), Emu.of(9525), Emu.of(9525), Emu.of(19_050));
 
     // Act
     const actual = rectEquals(base, base);
@@ -50,8 +50,8 @@ describe('rectEquals', () => {
 
   it('should return true when comparing two identical rectangles', () => {
     // Arrange
-    const rect1 = rect(emu(0), emu(9525), emu(9525), emu(19_050));
-    const rect2 = rect(emu(0), emu(9525), emu(9525), emu(19_050));
+    const rect1 = rect(Emu.of(0), Emu.of(9525), Emu.of(9525), Emu.of(19_050));
+    const rect2 = rect(Emu.of(0), Emu.of(9525), Emu.of(9525), Emu.of(19_050));
 
     // Act
     const actual = rectEquals(rect1, rect2);
@@ -61,13 +61,13 @@ describe('rectEquals', () => {
   });
 
   it.each([
-    rect(emu(9525), emu(9525), emu(9525), emu(19_050)),
-    rect(emu(0), emu(0), emu(9525), emu(19_050)),
-    rect(emu(0), emu(9525), emu(19_050), emu(19_050)),
-    rect(emu(0), emu(9525), emu(9525), emu(9525)),
+    rect(Emu.of(9525), Emu.of(9525), Emu.of(9525), Emu.of(19_050)),
+    rect(Emu.of(0), Emu.of(0), Emu.of(9525), Emu.of(19_050)),
+    rect(Emu.of(0), Emu.of(9525), Emu.of(19_050), Emu.of(19_050)),
+    rect(Emu.of(0), Emu.of(9525), Emu.of(9525), Emu.of(9525)),
   ])('should return false when comparing two different rectangles', (other) => {
     // Arrange
-    const base = rect(emu(0), emu(9525), emu(9525), emu(19_050));
+    const base = rect(Emu.of(0), Emu.of(9525), Emu.of(9525), Emu.of(19_050));
 
     // Act
     const actual = rectEquals(base, other);

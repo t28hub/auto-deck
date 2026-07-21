@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { type Size, size, sizeSchema } from './geometry';
 import { entityId } from './id';
-import { pixels } from './units';
+import { Emu } from './units';
 
 /**
  * Schema for a canvas identifier, and a generator for new canvas identifiers.
@@ -18,14 +18,14 @@ export type CanvasId = z.infer<typeof canvasIdSchema>;
  *
  * @see https://aspectratiocalculator.com/presentation-aspect-ratios/
  */
-export const WIDESCREEN_16_9: Size = size(pixels(1280), pixels(720));
+export const WIDESCREEN_16_9: Size = size(Emu.fromPixels(1280), Emu.fromPixels(720));
 
 /**
  * 4:3 standard canvas size (960×720 px @96dpi), the common PowerPoint standard size.
  *
  * @see https://aspectratiocalculator.com/presentation-aspect-ratios/
  */
-export const STANDARD_4_3: Size = size(pixels(960), pixels(720));
+export const STANDARD_4_3: Size = size(Emu.fromPixels(960), Emu.fromPixels(720));
 
 /**
  * Schema for a canvas, the shared page setup of a deck.

@@ -1,6 +1,6 @@
 import { nodeById } from '@auto-deck/renderer';
 import { TEXT_STYLE } from '@auto-deck/renderer-svg';
-import { type ElementId, toPixels } from '@auto-deck/schema';
+import { type ElementId, Emu } from '@auto-deck/schema';
 import { cn } from '@auto-deck/ui/lib/utils';
 import { type CSSProperties, type ReactElement, useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CompiledSlide } from '@/compile';
@@ -57,7 +57,7 @@ export function EditorPane({ className, selectedElementId, slide }: EditorPanePr
     if (canvasWidth === undefined || canvasHeight === undefined) {
       return undefined;
     }
-    return { width: toPixels(canvasWidth), height: toPixels(canvasHeight) };
+    return { width: Emu.toPixels(canvasWidth), height: Emu.toPixels(canvasHeight) };
   }, [canvasWidth, canvasHeight]);
 
   const { zoom, zoomIn, zoomOut, zoomToFit, setZoom } = useZoom(scrollRef, contentSize);
@@ -140,10 +140,10 @@ export function EditorPane({ className, selectedElementId, slide }: EditorPanePr
                   key={editingNode.id}
                   className="absolute resize-none overflow-hidden border-none bg-transparent outline-none"
                   style={{
-                    left: toPixels(editingNode.bounds.x),
-                    top: toPixels(editingNode.bounds.y),
-                    width: toPixels(editingNode.bounds.w),
-                    height: toPixels(editingNode.bounds.h),
+                    left: Emu.toPixels(editingNode.bounds.x),
+                    top: Emu.toPixels(editingNode.bounds.y),
+                    width: Emu.toPixels(editingNode.bounds.w),
+                    height: Emu.toPixels(editingNode.bounds.h),
                     paddingLeft: TEXT_STYLE.padding,
                     paddingTop: TEXT_STYLE.fontSize * 0.2,
                     fontFamily: TEXT_STYLE.fontFamily,

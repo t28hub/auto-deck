@@ -1,5 +1,5 @@
-import type { Deck, Emu, Rect } from '@auto-deck/schema';
-import { emu, pixels, rect } from '@auto-deck/schema';
+import type { Deck, Rect } from '@auto-deck/schema';
+import { Emu, rect } from '@auto-deck/schema';
 import type { ResolveDiagnostic, ResolveResult } from './diagnostic';
 import { type ResolvedSlide, resolveSlide } from './slide';
 
@@ -23,7 +23,7 @@ export interface ResolveOptions {
 /**
  * The default margin around the content area, in EMU.
  */
-const DEFAULT_MARGIN: Emu = pixels(0);
+const DEFAULT_MARGIN: Emu = Emu.fromPixels(0);
 
 /**
  * Finds the keys that occur more than once across the items, in first-seen order.
@@ -90,7 +90,7 @@ export function resolveDeck(deck: Deck, { margin = DEFAULT_MARGIN }: ResolveOpti
     });
     return { success: false, diagnostics };
   }
-  const area: Rect = rect(margin, margin, emu(contentW), emu(contentH));
+  const area: Rect = rect(margin, margin, Emu.of(contentW), Emu.of(contentH));
 
   const layoutsById = new Map(deck.layouts.map((layout) => [layout.id, layout] as const));
   const slides: ResolvedSlide[] = [];

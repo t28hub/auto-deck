@@ -1,5 +1,5 @@
 import type { Element, ElementId, Layout, Rect, Slide, SlotId } from '@auto-deck/schema';
-import { emu, rect } from '@auto-deck/schema';
+import { Emu, rect } from '@auto-deck/schema';
 import type { ResolveDiagnostic, ResolveResult } from './diagnostic';
 import type { ResolvedElement } from './element';
 import { resolveLength } from './length';
@@ -89,9 +89,9 @@ export function resolveSlide(slide: Slide, layout: Layout, area: Rect): ResolveR
       });
       continue;
     }
-    const y = emu(region.y);
-    const w = emu(cell);
-    const h = emu(region.h);
+    const y = Emu.of(region.y);
+    const w = Emu.of(cell);
+    const h = Emu.of(region.h);
     for (const [index, element] of group.slice(0, count).entries()) {
       // An overridden element keeps its seat (the index), but its slot-derived
       // bounds would only be discarded.
@@ -99,7 +99,7 @@ export function resolveSlide(slide: Slide, layout: Layout, area: Rect): ResolveR
         continue;
       }
       const x = region.x + index * (cell + gap);
-      boundsById.set(element.id, rect(emu(x), y, w, h));
+      boundsById.set(element.id, rect(Emu.of(x), y, w, h));
     }
   }
 

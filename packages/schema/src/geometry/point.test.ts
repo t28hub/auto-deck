@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { emu } from '../units';
+import { Emu } from '../units';
 import { point, pointSchema } from './point';
 
 describe('pointSchema', () => {
@@ -24,7 +24,7 @@ describe('pointSchema', () => {
 describe('point', () => {
   it('should create a point from branded coordinates', () => {
     // Act
-    const actual = point(emu(9525), emu(19_050));
+    const actual = point(Emu.of(9525), Emu.of(19_050));
 
     // Assert
     expect(actual).toEqual({ x: 9525, y: 19_050 });

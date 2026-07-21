@@ -2,8 +2,8 @@ import type { ResolvedDeck, ResolvedElement } from '@auto-deck/engine';
 import {
   canvasIdSchema,
   deckIdSchema,
+  Emu,
   elementIdSchema,
-  pixels,
   rect,
   slideIdSchema,
   WIDESCREEN_16_9,
@@ -11,7 +11,7 @@ import {
 import { describe, expect, it } from 'vitest';
 import { scenesFromDeck } from './transformer';
 
-const BOUNDS = rect(pixels(0), pixels(0), pixels(1280), pixels(144));
+const BOUNDS = rect(Emu.fromPixels(0), Emu.fromPixels(0), Emu.fromPixels(1280), Emu.fromPixels(144));
 
 /**
  * Creates a resolved deck literal with one text element per slide. Built by
