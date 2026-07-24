@@ -1,0 +1,27 @@
+{
+  "name": "@auto-deck/store",
+  "version": "0.1.0",
+  "description": "Framework-agnostic deck store: serializable change-request commands with bounded undo/redo history and middleware",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@auto-deck/schema": "workspace:*",
+    "immer": "11.1.15"
+  },
+  "devDependencies": {
+    "@auto-deck/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
