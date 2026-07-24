@@ -8,7 +8,7 @@ import { ControlBar } from '@/components/editor/control-bar';
 import { ElementOverlay } from '@/components/editor/element-overlay';
 import { SlideView } from '@/components/slide-view';
 import { useZoom } from '@/hooks/use-zoom';
-import { useDocumentStore } from '@/stores/document';
+import { useDeckStore } from '@/stores/document';
 
 /**
  * Props for the EditorPane component.
@@ -42,7 +42,7 @@ export function EditorPane({ className, selectedElementId, slide }: EditorPanePr
   const spacerRef = useRef<HTMLDivElement | null>(null);
   const previousZoomRef = useRef<number | null>(null);
 
-  const setElementText = useDocumentStore((state) => state.setElementText);
+  const store = useDeckStore();
   const [editingElementId, setEditingElementId] = useState<ElementId | null>(null);
 
   // A stable identity keeps this mount-only, so re-renders while typing do not re-select.
@@ -154,7 +154,19 @@ export function EditorPane({ className, selectedElementId, slide }: EditorPanePr
                   value={editingNode.text}
                   aria-label="Element text"
                   ref={focusEditor}
-                  onChange={(event) => setElementText(slide.scene.id, editingNode.id, event.target.value)}
+                  onChange={(event) =>
+                    // The shared key merges the keystrokes of one editing burst
+                    // into a single undo step.
+                    store?.dispatch(
+                      {
+                        type: 'setElementText',
+                        slideId: slide.scene.id,
+                        elementId: editingNode.id,
+                        text: event.target.value,
+                      },
+                      { coalesceKey: `text:${editingNode.id}` },
+                    )
+                  }
                   onBlur={() => setEditingElementId(null)}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.key === 'Escape') {

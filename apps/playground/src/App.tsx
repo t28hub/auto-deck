@@ -6,16 +6,17 @@ import { EditorPane } from '@/components/editor/editor-pane';
 import { InspectorPane } from '@/components/inspector/inspector-pane';
 import { NavigatorPane } from '@/components/navigator/navigator-pane';
 import { Toolbar } from '@/components/toolbar';
+import { useUndoShortcuts } from '@/hooks/use-undo-shortcuts';
 import { deckRepository, INITIAL_DECK_ID } from '@/repository';
 import { compile } from './compile';
-import { useDocumentStore } from './stores/document';
+import { useDeck, useDeckStore, useDocumentStore } from './stores/document';
 
 /**
  * Loads the initial deck through the repository into the document store, and
  * shows the editor once it is there.
  */
 export function App(): ReactElement {
-  const deck = useDocumentStore((state) => state.deck);
+  const deck = useDeck();
   const hydrate = useDocumentStore((state) => state.hydrate);
 
   useEffect(() => {
@@ -46,8 +47,11 @@ export function App(): ReactElement {
  * @param deck - The deck being edited.
  */
 function DeckEditor({ deck }: { deck: Deck }): ReactElement {
+  const store = useDeckStore();
   const selectedSlideId = useDocumentStore((state) => state.selectedSlideId);
   const selectedElementId = useDocumentStore((state) => state.selectedElementId);
+
+  useUndoShortcuts(store);
 
   const result = useMemo(() => compile(deck), [deck]);
   const slides = result.success ? result.slides : [];
