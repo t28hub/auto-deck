@@ -4,7 +4,7 @@ import { FieldGroup, FieldLegend, FieldSet } from '@auto-deck/ui/components/fiel
 import { cn } from '@auto-deck/ui/lib/utils';
 import type { ReactElement } from 'react';
 import { NumberField } from '@/components/inspector/number-field';
-import { useDocumentStore } from '@/stores/document';
+import { useDeckStore } from '@/stores/document';
 
 /**
  * Props for the LayoutTab component.
@@ -33,7 +33,7 @@ interface LayoutTabProps {
  * @returns The layout controls, or a hint when no element is selected.
  */
 export function LayoutTab({ className, scene, selectedElementId }: LayoutTabProps): ReactElement {
-  const setElementBounds = useDocumentStore((state) => state.setElementBounds);
+  const store = useDeckStore();
 
   const node = scene === undefined ? undefined : nodeById(scene, selectedElementId);
   if (scene === undefined || node === undefined) {
@@ -46,14 +46,23 @@ export function LayoutTab({ className, scene, selectedElementId }: LayoutTabProp
   const { id: elementId, bounds } = node;
 
   /**
-   * Commits the bounds with the edited fields replaced, so the untouched
-   * fields keep their exact EMU values.
+   * Commits the bounds with the edited field replaced, so the untouched
+   * fields keep their exact EMU values. The per-field key merges the
+   * keystrokes of one field edit into a single undo step, named after
+   * whether the field positions or sizes the element.
    *
-   * @param patch - The edited bounds fields.
+   * @param field - The edited bounds field.
+   * @param value - The field's new value.
    */
-  function commit(patch: Partial<Rect>): void {
-    const next = { ...bounds, ...patch };
-    setElementBounds(sceneId, elementId, rect(next.x, next.y, next.w, next.h));
+  function commit(field: keyof Rect, value: Emu): void {
+    const next = { ...bounds, [field]: value };
+    store?.dispatch(
+      { type: 'setElementBounds', slideId: sceneId, elementId, bounds: rect(next.x, next.y, next.w, next.h) },
+      {
+        coalesceKey: `bounds:${elementId}:${field}`,
+        label: field === 'x' || field === 'y' ? 'Move element' : 'Resize element',
+      },
+    );
   }
 
   return (
@@ -65,13 +74,13 @@ export function LayoutTab({ className, scene, selectedElementId }: LayoutTabProp
             key={`${node.id}-x`}
             label="X"
             value={Math.round(Emu.toPixels(node.bounds.x))}
-            onCommit={(x) => commit({ x: Emu.fromPixels(x) })}
+            onCommit={(x) => commit('x', Emu.fromPixels(x))}
           />
           <NumberField
             key={`${node.id}-y`}
             label="Y"
             value={Math.round(Emu.toPixels(node.bounds.y))}
-            onCommit={(y) => commit({ y: Emu.fromPixels(y) })}
+            onCommit={(y) => commit('y', Emu.fromPixels(y))}
           />
         </FieldGroup>
       </FieldSet>
@@ -84,14 +93,14 @@ export function LayoutTab({ className, scene, selectedElementId }: LayoutTabProp
             label="W"
             min={1}
             value={Math.round(Emu.toPixels(node.bounds.w))}
-            onCommit={(w) => commit({ w: Emu.fromPixels(w) })}
+            onCommit={(w) => commit('w', Emu.fromPixels(w))}
           />
           <NumberField
             key={`${node.id}-h`}
             label="H"
             min={1}
             value={Math.round(Emu.toPixels(node.bounds.h))}
-            onCommit={(h) => commit({ h: Emu.fromPixels(h) })}
+            onCommit={(h) => commit('h', Emu.fromPixels(h))}
           />
         </FieldGroup>
       </FieldSet>

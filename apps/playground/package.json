@@ -18,6 +18,7 @@
     "@auto-deck/renderer-svg": "workspace:*",
     "@auto-deck/repository": "workspace:*",
     "@auto-deck/schema": "workspace:*",
+    "@auto-deck/store": "workspace:*",
     "@auto-deck/ui": "workspace:*",
     "lucide-react": "1.23.0",
     "react": "catalog:",
@@ -27,7 +28,6 @@
   },
   "devDependencies": {
     "@auto-deck/tsconfig": "workspace:*",
-    "shadcn": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/react": "catalog:",
@@ -37,6 +37,7 @@
     "@vitejs/plugin-react": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "happy-dom": "catalog:",
+    "shadcn": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

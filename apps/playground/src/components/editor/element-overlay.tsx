@@ -2,7 +2,7 @@ import { nodeById, type Scene, type SceneNode } from '@auto-deck/renderer';
 import { type ElementId, Emu, type Rect, rect } from '@auto-deck/schema';
 import { cn } from '@auto-deck/ui/lib/utils';
 import { type PointerEvent, type ReactElement, useRef } from 'react';
-import { useDocumentStore } from '@/stores/document';
+import { useDeckStore, useDocumentStore } from '@/stores/document';
 
 /**
  * The distance in client pixels a pointer must travel before a press counts
@@ -84,7 +84,7 @@ export function ElementOverlay({
   selectedElementId,
 }: ElementOverlayProps): ReactElement {
   const selectElement = useDocumentStore((state) => state.selectElement);
-  const setElementBounds = useDocumentStore((state) => state.setElementBounds);
+  const store = useDeckStore();
 
   const dragRef = useRef<DragState | null>(null);
 
@@ -98,6 +98,9 @@ export function ElementOverlay({
     }
 
     event.currentTarget.setPointerCapture(event.pointerId);
+    // A press that never travels commits an empty interaction, which records
+    // nothing, so a plain click stays out of the undo history.
+    store?.beginInteraction();
     dragRef.current = {
       elementId: node.id,
       origin: node.bounds,
@@ -119,22 +122,30 @@ export function ElementOverlay({
       return;
     }
 
-    // Committing on every move keeps the deck the single source of truth, so
-    // the slide, the thumbnails, and the JSON view all follow the drag live.
-    setElementBounds(
-      scene.id,
-      drag.elementId,
-      rect(
+    // Dispatching on every move keeps the deck the single source of truth, so
+    // the slide, the thumbnails, and the JSON view all follow the drag live;
+    // the open interaction collapses the whole drag into one undo step.
+    store?.dispatch({
+      type: 'setElementBounds',
+      slideId: scene.id,
+      elementId: drag.elementId,
+      bounds: rect(
         Emu.of(Math.round(drag.origin.x + dxPx * drag.emuPerClientPx)),
         Emu.of(Math.round(drag.origin.y + dyPx * drag.emuPerClientPx)),
         drag.origin.w,
         drag.origin.h,
       ),
-    );
+    });
   }
 
-  function endDrag(): void {
+  function commitDrag(): void {
     dragRef.current = null;
+    store?.commitInteraction('Move element');
+  }
+
+  function cancelDrag(): void {
+    dragRef.current = null;
+    store?.cancelInteraction();
   }
 
   const selectedNode = nodeById(scene, selectedElementId);
@@ -161,8 +172,8 @@ export function ElementOverlay({
           onDoubleClick={() => onElementEdit(node.id)}
           onPointerDown={(event) => handlePointerDown(node, event)}
           onPointerMove={handlePointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
+          onPointerUp={commitDrag}
+          onPointerCancel={cancelDrag}
         />
       ))}
 
